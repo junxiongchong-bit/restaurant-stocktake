@@ -48,21 +48,20 @@
       color: var(--muted); padding: 8px 0 4px; margin-top: 4px;
       border-bottom: 1px solid var(--border); margin-bottom: 4px;
     }
-    /* Ingredient row — desktop: 5 columns */
+    /* Ingredient row */
     .ing-row {
       display: grid;
-      grid-template-columns: 2fr 110px 90px 110px 90px;
-      gap: 8px; align-items: end;
-      padding: 10px 0; border-bottom: 1px solid var(--border);
+      grid-template-columns: 1fr 130px 100px;
+      gap: 10px; align-items: end;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
     }
     .ing-row:last-child { border-bottom: none; }
     .ing-name { font-size: .95rem; font-weight: 600; padding-top: 10px; }
     .ing-unit { font-size: .73rem; color: var(--muted); margin-top: 2px; }
-    /* Mobile: stack into 2 rows */
-    @media (max-width: 600px) {
-      .ing-row { grid-template-columns: 1fr; gap: 4px; }
-      .ing-inputs { display: grid; grid-template-columns: 1fr 90px 1fr 90px; gap: 6px; align-items: end; }
-      input[type=number] { font-size: 1.1rem; }
+    /* Mobile: keep same 3-col layout but tighten */
+    @media (max-width: 500px) {
+      .ing-row { grid-template-columns: 1fr 110px 85px; gap: 6px; }
+      input[type=number] { font-size: 1.05rem; }
     }
     /* Toast */
     #toast {
@@ -270,10 +269,7 @@ async function reloadIngredients() {
 function initCountLines() {
   countLines = {};
   ingredients.forEach(i => {
-    countLines[i.id] = {
-      openQty: '', openUnit: i.defaultUnit || i.recipeUnit,
-      closeQty: '', closeUnit: i.defaultUnit || i.recipeUnit
-    };
+    countLines[i.id] = { qty: '', unit: i.defaultUnit || i.recipeUnit };
   });
 }
 
@@ -287,55 +283,38 @@ function unitSel(id, val) {
 }
 
 function renderIngRow(i) {
-  const cl = countLines[i.id] || {};
-  const ou = cl.openUnit  || i.defaultUnit || i.recipeUnit;
-  const cu = cl.closeUnit || ou;
+  const cl  = countLines[i.id] || {};
+  const unit = cl.unit || i.defaultUnit || i.recipeUnit;
   return `
     <div class="ing-row" id="row-${i.id}">
       <div>
         <div class="ing-name">${i.name}</div>
-        <div class="ing-unit">recipe unit: ${i.recipeUnit}</div>
+        <div class="ing-unit">${i.recipeUnit}</div>
       </div>
       <div>
-        <label>Open Qty</label>
-        <input type="number" step="0.01" min="0" id="oq-${i.id}"
-          placeholder="0" value="${cl.openQty || ''}"
-          onchange="saveLine('oq-${i.id}')">
-      </div>
-      <div>
-        <label>Unit</label>
-        ${unitSel('ou-' + i.id, ou)}
-      </div>
-      <div>
-        <label>Close Qty</label>
-        <input type="number" step="0.01" min="0" id="cq-${i.id}"
-          placeholder="0" value="${cl.closeQty || ''}"
-          onchange="saveLine('cq-${i.id}')">
+        <label>Count Qty</label>
+        <input type="number" step="0.01" min="0" id="qty-${i.id}"
+          placeholder="0" value="${cl.qty || ''}"
+          onchange="saveLine('qty-${i.id}')">
       </div>
       <div>
         <label>Unit</label>
-        ${unitSel('cu-' + i.id, cu)}
+        ${unitSel('unit-' + i.id, unit)}
       </div>
     </div>`;
 }
 
 function saveLine(elId) {
-  // elId format: "oq-{ingId}", "ou-{ingId}", "cq-{ingId}", "cu-{ingId}"
-  const dash = elId.indexOf('-');
-  const field = elId.slice(0, dash);   // oq / ou / cq / cu
+  // elId format: "qty-{ingId}" or "unit-{ingId}"
+  const dash  = elId.indexOf('-');
+  const field = elId.slice(0, dash);   // qty / unit
   const ingId = elId.slice(dash + 1);
   const el = document.getElementById(elId);
   if (!el || !countLines[ingId]) return;
-  const map = { oq: 'openQty', ou: 'openUnit', cq: 'closeQty', cu: 'closeUnit' };
-  const isQty = field === 'oq' || field === 'cq';
-  countLines[ingId][map[field]] = isQty ? (parseFloat(el.value) || 0) : el.value;
-  // Highlight the row if any qty is entered
-  const cl = countLines[ingId];
+  countLines[ingId][field] = field === 'qty' ? (parseFloat(el.value) || 0) : el.value;
+  // Highlight row when qty is entered
   const row = document.getElementById('row-' + ingId);
-  if (row) {
-    const hasData = (cl.openQty > 0) || (cl.closeQty > 0);
-    row.style.background = hasData ? 'rgba(78,204,163,.04)' : '';
-  }
+  if (row) row.style.background = (countLines[ingId].qty > 0) ? 'rgba(78,204,163,.04)' : '';
 }
 
 function renderCountScreen() {
@@ -369,22 +348,20 @@ async function submitCount() {
   if (!from || !to) { toast('Please enter a date range.', 'error'); return; }
   if (from > to) { toast('Period Start must be before Period End.', 'error'); return; }
 
-  // Only include lines where at least one qty was entered
+  // Only include lines where a qty was entered
   const lines = ingredients
     .map(i => {
       const cl = countLines[i.id] || {};
       return {
         ingredientId: i.id,
-        openQty:   parseFloat(cl.openQty)  || 0,
-        openUnit:  cl.openUnit  || i.defaultUnit || i.recipeUnit,
-        closeQty:  parseFloat(cl.closeQty) || 0,
-        closeUnit: cl.closeUnit || cl.openUnit || i.defaultUnit || i.recipeUnit
+        closeQty:  parseFloat(cl.qty)  || 0,
+        closeUnit: cl.unit || i.defaultUnit || i.recipeUnit
       };
     })
-    .filter(l => l.openQty > 0 || l.closeQty > 0);
+    .filter(l => l.closeQty > 0);
 
   if (!lines.length) {
-    toast('Please enter at least one open or close quantity.', 'error'); return;
+    toast('Please enter at least one count quantity.', 'error'); return;
   }
 
   const id = uid();
@@ -405,7 +382,7 @@ async function submitCount() {
     // Show success screen
     document.getElementById('success-summary').innerHTML = `
       <strong>Period:</strong> ${from} → ${to}<br>
-      <strong>Lines entered:</strong> ${lines.length} ingredient${lines.length !== 1 ? 's' : ''}<br>
+      <strong>Items counted:</strong> ${lines.length} ingredient${lines.length !== 1 ? 's' : ''}<br>
       ${count.note ? `<strong>Note:</strong> ${count.note}<br>` : ''}
       <strong>Submitted:</strong> ${new Date().toLocaleTimeString()}
     `;
