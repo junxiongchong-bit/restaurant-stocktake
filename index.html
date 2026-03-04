@@ -253,6 +253,7 @@
 
 <script>
 // ── STATE ─────────────────────────────────────────────────────────────────
+const DEFAULT_FB_URL = 'https://restaurant-cost-app-default-rtdb.asia-southeast1.firebasedatabase.app';
 let fbUrl = '';
 let ingredients  = [];  // [{id, name, category, recipeUnit, defaultUnit}]
 let batchRecipes = [];  // [{id, name, batchYield}]
@@ -311,7 +312,7 @@ function saveSetup() {
 function clearSetup() {
   localStorage.removeItem('rcc-st-fb-url');
   fbUrl = '';
-  document.getElementById('setup-fb-url').value = '';
+  document.getElementById('setup-fb-url').value = DEFAULT_FB_URL;
   document.getElementById('tab-bar').style.display = 'none';
   showScreen('setup');
 }
@@ -610,10 +611,11 @@ function updateTabUI() {
 
 // ── INIT ──────────────────────────────────────────────────────────────────
 (function init() {
-  const saved = localStorage.getItem('rcc-st-fb-url');
+  const saved = localStorage.getItem('rcc-st-fb-url') || DEFAULT_FB_URL;
+  document.getElementById('setup-fb-url').value = saved;
+  fbUrl = saved;
+  localStorage.setItem('rcc-st-fb-url', saved);
   if (saved) {
-    fbUrl = saved;
-    document.getElementById('setup-fb-url').value = saved;
     loadData();
   } else {
     showScreen('setup');
