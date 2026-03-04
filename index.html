@@ -310,11 +310,10 @@ function saveSetup() {
 }
 
 function clearSetup() {
-  localStorage.removeItem('rcc-st-fb-url');
-  fbUrl = '';
+  fbUrl = DEFAULT_FB_URL;
+  localStorage.setItem('rcc-st-fb-url', DEFAULT_FB_URL);
   document.getElementById('setup-fb-url').value = DEFAULT_FB_URL;
-  document.getElementById('tab-bar').style.display = 'none';
-  showScreen('setup');
+  loadData();
 }
 
 // ── LOAD DATA ─────────────────────────────────────────────────────────────
