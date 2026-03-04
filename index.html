@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Stock Count</title>
+  <title>Tablet — Stock &amp; Production</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -58,14 +58,13 @@
     .ing-row:last-child { border-bottom: none; }
     .ing-name { font-size: .95rem; font-weight: 600; padding-top: 10px; }
     .ing-unit { font-size: .73rem; color: var(--muted); margin-top: 2px; }
-    /* Mobile: keep same 3-col layout but tighten */
     @media (max-width: 500px) {
       .ing-row { grid-template-columns: 1fr 110px 85px; gap: 6px; }
       input[type=number] { font-size: 1.05rem; }
     }
     /* Toast */
     #toast {
-      position: fixed; bottom: 80px; right: 20px;
+      position: fixed; bottom: 130px; right: 20px;
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 8px; padding: 12px 20px; font-size: .9rem;
       z-index: 200; opacity: 0; transition: .3s; pointer-events: none;
@@ -83,24 +82,47 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     /* Success screen */
     .success-icon { font-size: 5rem; text-align: center; margin: 30px 0; }
-    /* Fixed submit bar */
+    /* Fixed submit bar (above tab bar) */
     .submit-bar {
-      position: fixed; bottom: 0; left: 0; right: 0;
+      position: fixed; bottom: 56px; left: 0; right: 0;
       background: var(--surface); border-top: 1px solid var(--border);
       padding: 12px 20px; display: flex; gap: 10px; align-items: center;
     }
     .submit-bar .spacer { flex: 1; }
-    .main-content { padding-bottom: 80px; }
-    /* Count badge on ingredient */
+    /* Tab bar */
+    .tab-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
+      background: var(--surface); border-top: 2px solid var(--border);
+      display: flex; z-index: 100;
+    }
+    .tab-btn {
+      flex: 1; border: none; background: transparent; color: var(--muted);
+      font-size: .95rem; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: .2s;
+    }
+    .tab-btn.active { color: var(--accent2); border-top: 2px solid var(--accent2); margin-top: -2px; }
+    .tab-btn:active { opacity: .7; }
+    /* Main content padding to clear fixed bars */
+    .main-content { padding-bottom: 140px; }
+    .prod-content { padding-bottom: 80px; }
+    /* Count badge */
     .qty-entered { border-color: var(--accent2) !important; }
     .setup-info { background: var(--surface2); border-radius: 8px; padding: 12px; font-size: .82rem; color: var(--muted); margin-top: 12px; line-height: 1.6; }
+    /* Preview box */
+    .preview-box {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+      padding: 14px; margin-top: 12px; font-size: .95rem; line-height: 1.8; text-align: center;
+    }
+    /* Big number input for production */
+    #prod-batches { font-size: 2.2rem !important; text-align: center; font-weight: 700; padding: 16px; }
   </style>
 </head>
 <body>
 
 <header>
-  <span style="font-size:1.4rem">📦</span>
-  <h1>Stock Count</h1>
+  <span style="font-size:1.4rem" id="header-icon">📦</span>
+  <h1 id="header-title">Stock Count</h1>
   <span id="header-info"></span>
 </header>
 
@@ -127,7 +149,7 @@
 <div id="screen-loading" class="screen">
   <div class="card" style="margin-top:20px;text-align:center">
     <div class="spinner"></div>
-    <div class="muted">Loading ingredients from Firebase…</div>
+    <div class="muted" id="loading-msg">Loading data from Firebase…</div>
   </div>
 </div>
 
@@ -154,12 +176,52 @@
     <div id="ing-list"></div>
   </div>
 
-  <!-- Fixed bottom bar -->
+  <!-- Fixed bottom bar for count (sits above the tab bar) -->
   <div class="submit-bar">
-    <button class="btn btn-ghost btn-sm" onclick="reloadIngredients()" title="Reload ingredient list">↺ Refresh</button>
+    <button class="btn btn-ghost btn-sm" onclick="reloadData()" title="Reload">↺ Refresh</button>
     <button class="btn btn-ghost btn-sm" onclick="clearSetup()" title="Change Firebase URL">⚙ Setup</button>
     <div class="spacer"></div>
     <button class="btn btn-success" onclick="submitCount()">✓ Submit Count</button>
+  </div>
+</div>
+
+<!-- ── PRODUCTION SCREEN ───────────────────────────────────────────────── -->
+<div id="screen-production" class="screen">
+  <div class="prod-content">
+    <div class="card" style="margin-top:0">
+      <label style="font-size:.85rem;color:var(--muted)">Batch Recipe *</label>
+      <select id="prod-recipe" onchange="updateProdPreview()" style="font-size:1.05rem;margin-top:4px">
+        <option value="">— Select batch recipe —</option>
+      </select>
+
+      <label style="margin-top:16px">Batches Made *</label>
+      <input type="number" id="prod-batches" min="1" step="1"
+        placeholder="0" oninput="updateProdPreview()">
+
+      <div id="prod-preview"></div>
+
+      <div class="form-row c2" style="margin-top:14px">
+        <div>
+          <label>Date *</label>
+          <input type="date" id="prod-date">
+        </div>
+        <div>
+          <label>Note (optional)</label>
+          <input id="prod-note" placeholder="e.g. morning run">
+        </div>
+      </div>
+
+      <button class="btn btn-success btn-block"
+        style="margin-top:20px;padding:16px;font-size:1.05rem"
+        onclick="submitProduction()">
+        ✓ Submit Production Log
+      </button>
+    </div>
+
+    <div style="text-align:center;margin-top:8px">
+      <button class="btn btn-ghost btn-sm" onclick="reloadData()">↺ Refresh recipes</button>
+      <button class="btn btn-ghost btn-sm" onclick="clearSetup()">⚙ Setup</button>
+    </div>
   </div>
 </div>
 
@@ -167,15 +229,24 @@
 <div id="screen-success" class="screen">
   <div class="card" style="margin-top:20px;text-align:center;padding:40px 20px">
     <div class="success-icon">✅</div>
-    <h2 style="font-size:1.3rem;margin-bottom:12px;color:var(--accent2)">Count Submitted!</h2>
+    <h2 style="font-size:1.3rem;margin-bottom:12px;color:var(--accent2)" id="success-title">Submitted!</h2>
     <p style="color:var(--muted);margin-bottom:8px;line-height:1.7">
-      The stock count has been saved to Firebase.<br>
-      The manager can now import it into the desktop app.
+      Saved to Firebase. The manager can import it into the desktop app.
     </p>
     <div id="success-summary" class="setup-info" style="text-align:left;margin-bottom:20px"></div>
-    <button class="btn btn-primary btn-block" onclick="startNewCount()">+ Start Another Count</button>
-    <button class="btn btn-ghost btn-block" onclick="reloadIngredients()">↺ Reload Ingredients</button>
+    <button class="btn btn-primary btn-block" id="success-new-btn" onclick="startNewCount()">+ Start Another Count</button>
+    <button class="btn btn-ghost btn-block" id="success-switch-btn" onclick="switchToOtherMode()">Switch to Production</button>
   </div>
+</div>
+
+<!-- Tab bar (shown on count / production screens) -->
+<div id="tab-bar" class="tab-bar" style="display:none">
+  <button class="tab-btn active" id="tab-count-btn" onclick="switchTab('count')">
+    📦 Stock Count
+  </button>
+  <button class="tab-btn" id="tab-prod-btn" onclick="switchTab('production')">
+    🍳 Production
+  </button>
 </div>
 
 <div id="toast"></div>
@@ -183,12 +254,15 @@
 <script>
 // ── STATE ─────────────────────────────────────────────────────────────────
 let fbUrl = '';
-let ingredients = []; // [{id, name, category, recipeUnit, defaultUnit}]
-let countLines = {};  // {ingId: {openQty, openUnit, closeQty, closeUnit}}
+let ingredients  = [];  // [{id, name, category, recipeUnit, defaultUnit}]
+let batchRecipes = [];  // [{id, name, batchYield}]
+let countLines   = {};  // {ingId: {qty, unit}}
+let currentTab        = 'count';
+let lastSubmittedMode = 'count';
 
 // ── UTILS ─────────────────────────────────────────────────────────────────
-const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-const todayStr = () => new Date().toISOString().slice(0, 10);
+const uid       = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const todayStr  = () => new Date().toISOString().slice(0, 10);
 const sevenDaysAgo = () => {
   const d = new Date(); d.setDate(d.getDate() - 7); return d.toISOString().slice(0, 10);
 };
@@ -231,41 +305,56 @@ function saveSetup() {
   }
   localStorage.setItem('rcc-st-fb-url', url);
   fbUrl = url;
-  loadIngredients();
+  loadData();
 }
 
 function clearSetup() {
   localStorage.removeItem('rcc-st-fb-url');
   fbUrl = '';
   document.getElementById('setup-fb-url').value = '';
+  document.getElementById('tab-bar').style.display = 'none';
   showScreen('setup');
 }
 
-// ── LOAD INGREDIENTS ──────────────────────────────────────────────────────
-async function loadIngredients() {
+// ── LOAD DATA ─────────────────────────────────────────────────────────────
+async function loadData() {
   showScreen('loading');
   try {
-    const data = await fbGet('/rcc/ingredients');
-    if (!data || !Array.isArray(data) || data.length === 0) {
-      toast('No ingredients found. Ask the manager to sync ingredients from the desktop app first.', 'error');
+    const [ingData, recData] = await Promise.all([
+      fbGet('/rcc/ingredients'),
+      fbGet('/rcc/batchRecipes').catch(() => null)
+    ]);
+
+    if (!ingData || !Array.isArray(ingData) || ingData.length === 0) {
+      toast('No ingredients found. Ask the manager to sync from the desktop app.', 'error');
       showScreen('setup'); return;
     }
-    ingredients = data;
+
+    ingredients  = ingData;
+    batchRecipes = Array.isArray(recData) ? recData : [];
+
     initCountLines();
     renderCountScreen();
-    showScreen('count');
-    document.getElementById('header-info').textContent = ingredients.length + ' ingredients loaded';
+    renderProductionRecipeList();
+
+    showScreen(currentTab === 'production' ? 'production' : 'count');
+    document.getElementById('tab-bar').style.display = 'flex';
+    updateTabUI();
+    document.getElementById('header-info').textContent =
+      ingredients.length + ' ingredients' +
+      (batchRecipes.length ? ', ' + batchRecipes.length + ' recipes' : '');
   } catch (e) {
     toast('Could not connect: ' + e.message, 'error');
     showScreen('setup');
   }
 }
 
-async function reloadIngredients() {
+async function reloadData() {
   if (!fbUrl) { showScreen('setup'); return; }
-  await loadIngredients();
+  await loadData();
 }
 
+// ── COUNT LOGIC ───────────────────────────────────────────────────────────
 function initCountLines() {
   countLines = {};
   ingredients.forEach(i => {
@@ -273,7 +362,6 @@ function initCountLines() {
   });
 }
 
-// ── RENDER COUNT SCREEN ───────────────────────────────────────────────────
 const UNITS = ['g', 'kg', 'ml', 'L', 'each', 'carton', 'case', 'bag', 'box', 'dozen', 'lb'];
 
 function unitSel(id, val) {
@@ -283,7 +371,7 @@ function unitSel(id, val) {
 }
 
 function renderIngRow(i) {
-  const cl  = countLines[i.id] || {};
+  const cl   = countLines[i.id] || {};
   const unit = cl.unit || i.defaultUnit || i.recipeUnit;
   return `
     <div class="ing-row" id="row-${i.id}">
@@ -305,26 +393,22 @@ function renderIngRow(i) {
 }
 
 function saveLine(elId) {
-  // elId format: "qty-{ingId}" or "unit-{ingId}"
   const dash  = elId.indexOf('-');
-  const field = elId.slice(0, dash);   // qty / unit
+  const field = elId.slice(0, dash);
   const ingId = elId.slice(dash + 1);
   const el = document.getElementById(elId);
   if (!el || !countLines[ingId]) return;
   countLines[ingId][field] = field === 'qty' ? (parseFloat(el.value) || 0) : el.value;
-  // Highlight row when qty is entered
   const row = document.getElementById('row-' + ingId);
   if (row) row.style.background = (countLines[ingId].qty > 0) ? 'rgba(78,204,163,.04)' : '';
 }
 
 function renderCountScreen() {
-  // Set default dates only if not already set
   const fromEl = document.getElementById('cnt-from');
   const toEl   = document.getElementById('cnt-to');
   if (!fromEl.value) fromEl.value = sevenDaysAgo();
   if (!toEl.value)   toEl.value   = todayStr();
 
-  // Group by category
   const groups = {};
   ingredients.forEach(i => {
     const cat = i.category || 'Uncategorised';
@@ -332,8 +416,7 @@ function renderCountScreen() {
     groups[cat].push(i);
   });
 
-  const el = document.getElementById('ing-list');
-  el.innerHTML = Object.entries(groups).map(([cat, ings]) => `
+  document.getElementById('ing-list').innerHTML = Object.entries(groups).map(([cat, ings]) => `
     <div class="card" style="padding:12px 18px">
       <div class="category-hdr">${cat} (${ings.length})</div>
       ${ings.map(i => renderIngRow(i)).join('')}
@@ -341,34 +424,24 @@ function renderCountScreen() {
   `).join('');
 }
 
-// ── SUBMIT ────────────────────────────────────────────────────────────────
 async function submitCount() {
   const from = document.getElementById('cnt-from').value;
   const to   = document.getElementById('cnt-to').value;
   if (!from || !to) { toast('Please enter a date range.', 'error'); return; }
-  if (from > to) { toast('Period Start must be before Period End.', 'error'); return; }
+  if (from > to)    { toast('Period Start must be before Period End.', 'error'); return; }
 
-  // Only include lines where a qty was entered
   const lines = ingredients
     .map(i => {
       const cl = countLines[i.id] || {};
-      return {
-        ingredientId: i.id,
-        closeQty:  parseFloat(cl.qty)  || 0,
-        closeUnit: cl.unit || i.defaultUnit || i.recipeUnit
-      };
+      return { ingredientId: i.id, closeQty: parseFloat(cl.qty) || 0, closeUnit: cl.unit || i.defaultUnit || i.recipeUnit };
     })
     .filter(l => l.closeQty > 0);
 
-  if (!lines.length) {
-    toast('Please enter at least one count quantity.', 'error'); return;
-  }
+  if (!lines.length) { toast('Please enter at least one count quantity.', 'error'); return; }
 
-  const id = uid();
+  const id    = uid();
   const count = {
-    id,
-    dateFrom: from,
-    dateTo: to,
+    id, dateFrom: from, dateTo: to,
     note: document.getElementById('cnt-note').value.trim(),
     submittedAt: new Date().toISOString(),
     lines
@@ -379,13 +452,18 @@ async function submitCount() {
 
   try {
     await fbPut('/rcc/pendingCounts/' + id, count);
-    // Show success screen
+    lastSubmittedMode = 'count';
+    document.getElementById('success-title').textContent   = 'Count Submitted!';
     document.getElementById('success-summary').innerHTML = `
       <strong>Period:</strong> ${from} → ${to}<br>
       <strong>Items counted:</strong> ${lines.length} ingredient${lines.length !== 1 ? 's' : ''}<br>
       ${count.note ? `<strong>Note:</strong> ${count.note}<br>` : ''}
       <strong>Submitted:</strong> ${new Date().toLocaleTimeString()}
     `;
+    document.getElementById('success-new-btn').textContent = '+ Start Another Count';
+    document.getElementById('success-new-btn').onclick     = startNewCount;
+    document.getElementById('success-switch-btn').textContent = 'Switch to Production';
+    document.getElementById('tab-bar').style.display = 'none';
     showScreen('success');
   } catch (e) {
     toast('Submit failed: ' + e.message, 'error');
@@ -400,7 +478,134 @@ function startNewCount() {
   document.getElementById('cnt-to').value   = todayStr();
   document.getElementById('cnt-note').value = '';
   renderCountScreen();
+  currentTab = 'count';
+  document.getElementById('tab-bar').style.display = 'flex';
+  updateTabUI();
   showScreen('count');
+}
+
+// ── PRODUCTION LOGIC ──────────────────────────────────────────────────────
+function renderProductionRecipeList() {
+  const sel = document.getElementById('prod-recipe');
+  if (!batchRecipes.length) {
+    sel.innerHTML = '<option value="">No batch recipes — ask manager to sync</option>';
+    return;
+  }
+  sel.innerHTML = '<option value="">— Select batch recipe —</option>' +
+    batchRecipes.map(r =>
+      `<option value="${r.id}">${r.name}${r.batchYield > 1 ? ' (' + r.batchYield + ' portions/batch)' : ''}</option>`
+    ).join('');
+  updateProdPreview();
+}
+
+function updateProdPreview() {
+  const recipeId = document.getElementById('prod-recipe').value;
+  const batches  = parseInt(document.getElementById('prod-batches').value) || 0;
+  const el       = document.getElementById('prod-preview');
+  if (!recipeId || !batches) { el.innerHTML = ''; return; }
+
+  const rec = batchRecipes.find(r => r.id === recipeId);
+  if (!rec) { el.innerHTML = ''; return; }
+
+  const batchYield    = rec.batchYield || 1;
+  const totalPortions = batches * batchYield;
+  el.innerHTML = `<div class="preview-box">
+    ${batchYield > 1
+      ? `<strong>${batches}</strong> batch${batches !== 1 ? 'es' : ''} &times; <strong>${batchYield}</strong> portions/batch<br>
+         = <strong style="color:var(--accent2);font-size:1.2rem">${totalPortions} portions</strong>`
+      : `<strong style="color:var(--accent2);font-size:1.2rem">${totalPortions}</strong> portion${totalPortions !== 1 ? 's' : ''} produced`
+    }
+  </div>`;
+}
+
+async function submitProduction() {
+  const recipeId = document.getElementById('prod-recipe').value;
+  const batches  = parseInt(document.getElementById('prod-batches').value) || 0;
+  const date     = document.getElementById('prod-date').value;
+  const note     = document.getElementById('prod-note').value.trim();
+
+  if (!recipeId)                { toast('Select a recipe.', 'error'); return; }
+  if (!batches || batches <= 0) { toast('Batches made must be > 0.', 'error'); return; }
+  if (!date)                    { toast('Date required.', 'error'); return; }
+
+  const rec           = batchRecipes.find(r => r.id === recipeId);
+  const batchYield    = rec ? (rec.batchYield || 1) : 1;
+  const totalPortions = batches * batchYield;
+
+  const id   = uid();
+  const prod = {
+    id, date, recipeId,
+    batchesLogged: batches,
+    portionsProduced: totalPortions,
+    note,
+    submittedAt: new Date().toISOString()
+  };
+
+  const btn = document.querySelector('#screen-production .btn-success');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+
+  try {
+    await fbPut('/rcc/pendingProductions/' + id, prod);
+    lastSubmittedMode = 'production';
+    document.getElementById('success-title').textContent = 'Production Logged!';
+    document.getElementById('success-summary').innerHTML = `
+      <strong>Recipe:</strong> ${rec ? rec.name : recipeId}<br>
+      <strong>Batches:</strong> ${batches}${batchYield > 1 ? ` &times; ${batchYield} = ${totalPortions} portions` : ''}<br>
+      <strong>Date:</strong> ${date}<br>
+      ${note ? `<strong>Note:</strong> ${note}<br>` : ''}
+      <strong>Submitted:</strong> ${new Date().toLocaleTimeString()}
+    `;
+    document.getElementById('success-new-btn').textContent = '+ Log Another Batch';
+    document.getElementById('success-new-btn').onclick     = startNewProduction;
+    document.getElementById('success-switch-btn').textContent = 'Switch to Stock Count';
+    document.getElementById('tab-bar').style.display = 'none';
+    showScreen('success');
+  } catch (e) {
+    toast('Submit failed: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = '✓ Submit Production Log';
+  }
+}
+
+function startNewProduction() {
+  document.getElementById('prod-recipe').value    = '';
+  document.getElementById('prod-batches').value   = '';
+  document.getElementById('prod-date').value      = todayStr();
+  document.getElementById('prod-note').value      = '';
+  document.getElementById('prod-preview').innerHTML = '';
+  currentTab = 'production';
+  document.getElementById('tab-bar').style.display = 'flex';
+  updateTabUI();
+  showScreen('production');
+}
+
+function switchToOtherMode() {
+  const tab = lastSubmittedMode === 'count' ? 'production' : 'count';
+  document.getElementById('tab-bar').style.display = 'flex';
+  switchTab(tab);
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  updateTabUI();
+  if (tab === 'count') {
+    document.getElementById('header-icon').textContent  = '📦';
+    document.getElementById('header-title').textContent = 'Stock Count';
+    showScreen('count');
+  } else {
+    document.getElementById('header-icon').textContent  = '🍳';
+    document.getElementById('header-title').textContent = 'Production Log';
+    if (!document.getElementById('prod-date').value) {
+      document.getElementById('prod-date').value = todayStr();
+    }
+    showScreen('production');
+  }
+}
+
+function updateTabUI() {
+  document.getElementById('tab-count-btn').classList.toggle('active', currentTab === 'count');
+  document.getElementById('tab-prod-btn').classList.toggle('active', currentTab === 'production');
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────
@@ -409,7 +614,7 @@ function startNewCount() {
   if (saved) {
     fbUrl = saved;
     document.getElementById('setup-fb-url').value = saved;
-    loadIngredients();
+    loadData();
   } else {
     showScreen('setup');
   }
