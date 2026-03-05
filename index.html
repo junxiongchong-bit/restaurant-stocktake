@@ -11,375 +11,703 @@
       --border: #2e3147; --accent: #6c63ff; --accent2: #4ecca3;
       --danger: #ff6b6b; --warn: #ffd93d; --text: #e8e8f0; --muted: #8888aa;
     }
-    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; }
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 16px; }
 
     /* ── HEADER ── */
     header {
       position: fixed; top: 0; left: 0; right: 0; z-index: 50;
       background: var(--surface); border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; padding: 0 16px; height: 56px; gap: 16px;
+      display: flex; align-items: center; padding: 0 14px; height: 56px; gap: 10px;
     }
-    header .logo { font-size: 1.1rem; font-weight: 700; color: var(--accent2); white-space: nowrap; }
+    .logo { font-size: 1.1rem; font-weight: 700; color: var(--accent2); white-space: nowrap; }
     header nav { display: flex; gap: 4px; margin-left: auto; }
     header nav button {
       background: none; border: none; color: var(--muted); cursor: pointer;
-      font-size: .85rem; font-weight: 600; padding: 8px 14px; border-radius: 6px;
-      transition: .15s; letter-spacing: .02em;
+      font-size: .85rem; font-weight: 600; padding: 8px 12px; border-radius: 6px; transition: .15s;
     }
     header nav button.active { background: var(--accent); color: #fff; }
+    #setup-btn {
+      background: none; border: 1px solid var(--border); color: var(--muted);
+      cursor: pointer; font-size: .8rem; padding: 6px 10px; border-radius: 6px;
+    }
 
-    /* ── CONTENT ── */
-    main { padding-top: 56px; min-height: 100vh; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    main { padding-top: 56px; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── SETUP SCREEN ── */
+    #screen-setup { max-width: 500px; margin: 60px auto; padding: 24px; }
+    #screen-setup h2 { font-size: 1.2rem; margin-bottom: 8px; }
+    #screen-setup p { color: var(--muted); font-size: .88rem; margin-bottom: 20px; line-height: 1.5; }
+    #screen-setup input {
+      width: 100%; padding: 10px 12px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+      font-size: .9rem; margin-bottom: 12px;
+    }
+    #screen-setup input:focus { outline: none; border-color: var(--accent2); }
+
+    /* ── LOADING ── */
+    #screen-loading { text-align: center; padding: 80px 20px; color: var(--muted); }
+    .spinner {
+      width: 32px; height: 32px; border: 3px solid var(--border);
+      border-top-color: var(--accent2); border-radius: 50%;
+      animation: spin .7s linear infinite; margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── BUTTONS ── */
+    .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: .95rem; font-weight: 600; transition: .15s; }
+    .btn-primary  { background: var(--accent); color: #fff; }
+    .btn-success  { background: var(--accent2); color: #0f1117; }
+    .btn-ghost    { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-danger   { background: var(--danger); color: #fff; }
+    .btn-sm       { padding: 7px 13px; font-size: .82rem; }
+    .btn:active   { opacity: .8; }
+    .btn:disabled { opacity: .4; pointer-events: none; }
 
     /* ── DATE NAV ── */
     .date-nav {
-      display: flex; align-items: center; justify-content: center; gap: 0;
+      display: flex; align-items: center; justify-content: center;
       background: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 12px 8px; position: sticky; top: 56px; z-index: 40;
+      padding: 10px 8px; position: sticky; top: 56px; z-index: 40;
     }
-    .date-nav button {
+    .date-nav .nav-btn {
       background: none; border: none; color: var(--muted); cursor: pointer;
-      font-size: 1.6rem; padding: 4px 18px; line-height: 1; user-select: none;
-      transition: color .15s;
+      font-size: 1.8rem; padding: 2px 20px; line-height: 1; user-select: none; transition: color .15s;
     }
-    .date-nav button:active { color: var(--accent2); }
-    .date-nav button.disabled { opacity: .2; pointer-events: none; }
-    #date-label {
-      font-size: 1.05rem; font-weight: 700; min-width: 220px;
-      text-align: center; user-select: none;
+    .date-nav .nav-btn:active { color: var(--accent2); }
+    .date-nav .nav-btn.disabled { opacity: .2; pointer-events: none; }
+    #date-label { font-size: 1rem; font-weight: 700; min-width: 220px; text-align: center; user-select: none; }
+    .today-badge {
+      font-size: .68rem; color: var(--accent2); margin-left: 8px;
+      background: rgba(78,204,163,.15); padding: 2px 7px; border-radius: 10px; vertical-align: middle;
     }
-    #date-today-badge {
-      font-size: .7rem; color: var(--accent2); margin-left: 8px;
-      background: rgba(78,204,163,.15); padding: 2px 7px; border-radius: 10px;
-      vertical-align: middle;
+
+    /* ── SECTION HEADERS ── */
+    .section-head {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 16px; background: var(--surface2);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
     }
+    .section-head .s-label { font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+    .section-head .s-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 
     /* ── PROGRESS BAR ── */
     .pbar { height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; flex: 1; }
     .pfill { height: 100%; border-radius: 4px; transition: width .3s; }
-
-    /* ── SECTION HEADER ── */
-    .section-head {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 16px; background: var(--surface2);
-      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-    }
-    .section-head .label {
-      font-size: .78rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .06em; color: var(--muted);
-    }
-    .section-head .count { font-size: .78rem; color: var(--muted); white-space: nowrap; margin-left: auto; }
+    #overall-progress { display: flex; align-items: center; gap: 12px; padding: 10px 16px; }
+    #overall-progress .prog-label { font-size: .82rem; color: var(--muted); white-space: nowrap; }
 
     /* ── CATEGORY HEADER ── */
     .cat-head {
       display: flex; align-items: center; gap: 10px;
-      padding: 8px 16px 8px 14px;
-      background: rgba(35,38,54,.8);
+      padding: 8px 16px; background: rgba(35,38,54,.9);
       border-bottom: 1px solid var(--border);
     }
-    .cat-head .cat-name { font-size: .8rem; font-weight: 700; letter-spacing: .04em; }
-    .cat-head .cat-count { font-size: .75rem; color: var(--muted); margin-left: auto; white-space: nowrap; }
+    .cat-name { font-size: .8rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    .cat-count { font-size: .75rem; color: var(--muted); margin-left: auto; white-space: nowrap; }
 
     /* ── TASK ROW ── */
     .task-row {
       display: flex; align-items: center; gap: 12px;
-      padding: 0 16px; min-height: 52px;
-      border-bottom: 1px solid var(--border);
-      transition: background .15s;
+      padding: 0 16px; min-height: 54px; border-bottom: 1px solid var(--border); transition: background .15s;
     }
     .task-row.done { background: rgba(78,204,163,.07); }
-    .task-row input[type=checkbox] {
-      width: 22px; height: 22px; cursor: pointer;
-      accent-color: var(--accent2); flex-shrink: 0;
-    }
-    .task-row input[type=checkbox]:disabled { opacity: .4; }
+    .task-row input[type=checkbox] { width: 22px; height: 22px; cursor: pointer; accent-color: var(--accent2); flex-shrink: 0; }
+    .task-row input[type=checkbox]:disabled { opacity: .35; }
     .task-name { flex: 1; font-size: .95rem; }
     .task-name.done { color: var(--muted); text-decoration: line-through; }
-    .task-target { font-size: .78rem; color: var(--muted); white-space: nowrap; min-width: 60px; text-align: right; }
+    .task-target { font-size: .78rem; color: var(--muted); white-space: nowrap; min-width: 56px; text-align: right; }
     .task-actual {
-      width: 100px; padding: 6px 10px; background: var(--surface2);
-      border: 1px solid var(--border); border-radius: 6px; color: var(--text);
-      font-size: .82rem; flex-shrink: 0;
+      width: 96px; padding: 6px 9px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: .82rem; flex-shrink: 0;
     }
     .task-actual:disabled { opacity: .3; }
     .task-actual:focus { outline: none; border-color: var(--accent2); }
 
     /* ── PRODUCTION CARD ── */
     .prod-card {
-      margin: 10px 14px; padding: 14px 16px;
+      margin: 8px 14px; padding: 14px 16px;
       background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
     }
-    .prod-card .prod-recipe { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
-    .prod-card .prod-meta { font-size: .82rem; color: var(--muted); }
-    .prod-card .prod-note { font-size: .82rem; color: var(--warn); margin-top: 6px; }
+    .prod-recipe { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .prod-meta { font-size: .84rem; color: var(--muted); }
+    .prod-note { font-size: .82rem; color: var(--warn); margin-top: 6px; }
 
-    /* ── EMPTY STATE ── */
-    .empty { text-align: center; color: var(--muted); padding: 40px 20px; font-size: .9rem; }
+    /* ── LOG PRODUCTION FORM ── */
+    #log-prod-form {
+      margin: 10px 14px; padding: 16px;
+      background: var(--surface); border: 1px solid var(--accent); border-radius: 10px;
+    }
+    #log-prod-form h4 { font-size: .9rem; margin-bottom: 12px; color: var(--accent2); }
+    #log-prod-form select, #log-prod-form input, #log-prod-form textarea {
+      width: 100%; padding: 10px 12px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+      font-size: .9rem; margin-bottom: 10px;
+    }
+    #log-prod-form select:focus, #log-prod-form input:focus, #log-prod-form textarea:focus { outline: none; border-color: var(--accent2); }
+    .form-row { display: flex; gap: 10px; }
+    .form-row > * { flex: 1; }
+    .form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
 
-    /* ── STOCK ── */
-    .stock-section { padding: 0; }
+    /* ── STOCK TAKE ── */
     .stock-cat-head {
-      padding: 9px 16px;
-      background: var(--surface2); border-bottom: 1px solid var(--border);
-      border-top: 1px solid var(--border);
-      font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted);
+      padding: 9px 16px; background: var(--surface2);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted);
     }
     .stock-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 11px 16px; border-bottom: 1px solid var(--border);
-      font-size: .88rem;
-    }
-    .stock-row.zero { opacity: .35; }
-    .stock-name { flex: 1; }
-    .stock-qty { font-weight: 700; color: var(--accent2); min-width: 60px; text-align: right; }
-    .stock-unit { color: var(--muted); min-width: 36px; font-size: .78rem; }
-    .stock-note { font-size: .72rem; color: var(--muted); padding: 8px 16px 4px; }
-
-    /* ── OVERALL PROGRESS ── */
-    #overall-progress {
       display: flex; align-items: center; gap: 12px;
-      padding: 10px 16px; background: var(--bg);
+      padding: 8px 16px; border-bottom: 1px solid var(--border); min-height: 52px;
     }
-    #overall-progress .prog-label { font-size: .82rem; color: var(--muted); white-space: nowrap; }
+    .stock-name { flex: 1; font-size: .95rem; }
+    .stock-unit-label { font-size: .78rem; color: var(--muted); white-space: nowrap; width: 36px; }
+    .stock-input {
+      width: 90px; padding: 8px 10px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+      font-size: .95rem; text-align: right; flex-shrink: 0;
+    }
+    .stock-input:focus { outline: none; border-color: var(--accent2); }
+    .stock-input.filled { border-color: var(--accent2); background: rgba(78,204,163,.08); }
+    .stock-submit-bar {
+      position: sticky; bottom: 0; background: var(--surface);
+      border-top: 1px solid var(--border); padding: 14px 16px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .stock-submit-info { font-size: .82rem; color: var(--muted); }
+
+    /* ── HISTORY CARDS ── */
+    .history-card {
+      margin: 8px 14px; padding: 14px 16px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .history-card .hc-date { font-size: .78rem; color: var(--muted); margin-bottom: 6px; }
+    .history-card .hc-title { font-size: .92rem; font-weight: 700; margin-bottom: 4px; }
+    .history-card .hc-lines { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── EMPTY / STATUS ── */
+    .empty { text-align: center; color: var(--muted); padding: 36px 20px; font-size: .9rem; }
+    .status-bar {
+      background: var(--surface2); border-bottom: 1px solid var(--border);
+      padding: 6px 16px; font-size: .76rem; color: var(--muted);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .dot.green { background: var(--accent2); }
+    .dot.red   { background: var(--danger); }
+    .dot.yellow{ background: var(--warn); }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px 20px; font-size: .88rem; z-index: 200;
+      opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap;
+    }
+    #toast.show { opacity: 1; }
+    #toast.success { border-color: var(--accent2); color: var(--accent2); }
+    #toast.error   { border-color: var(--danger);  color: var(--danger);  }
   </style>
 </head>
 <body>
 
 <header>
   <span class="logo">🍽 Kitchen</span>
-  <nav>
-    <button class="active" id="tab-btn-prep" onclick="showTab('prep')">Prep &amp; Production</button>
-    <button id="tab-btn-stock" onclick="showTab('stock')">Stock</button>
+  <nav id="main-nav" style="display:none">
+    <button class="active" id="tab-btn-prep" onclick="showTab('prep')">Prep &amp; Prod</button>
+    <button id="tab-btn-stock" onclick="showTab('stock')">Stock Take</button>
   </nav>
+  <button id="setup-btn" onclick="showSetup()">⚙ Setup</button>
 </header>
 
 <main>
-
-  <!-- PREP & PRODUCTION TAB -->
-  <div class="tab-content active" id="tab-prep">
-
-    <!-- Date nav -->
-    <div class="date-nav">
-      <button id="btn-prev" onclick="changeDate(-1)">&#8249;</button>
-      <div id="date-label"></div>
-      <button id="btn-next" onclick="changeDate(1)">&#8250;</button>
-    </div>
-
-    <!-- Overall prep progress -->
-    <div id="overall-progress">
-      <div class="pbar" style="height:8px"><div class="pfill" id="overall-pfill"></div></div>
-      <span class="prog-label" id="overall-label"></span>
-    </div>
-
-    <!-- Prep tasks rendered here -->
-    <div id="prep-content"></div>
-
-    <!-- Production section -->
-    <div class="section-head" style="margin-top:6px">
-      <span class="label">Production Batches</span>
-      <span class="count" id="prod-count"></span>
-    </div>
-    <div id="prod-content"></div>
-
-  </div><!-- /tab-prep -->
-
-  <!-- STOCK TAB -->
-  <div class="tab-content" id="tab-stock">
-    <div class="stock-note">Based on cumulative purchase history</div>
-    <div id="stock-content"></div>
+  <!-- SETUP -->
+  <div class="screen active" id="screen-setup">
+    <h2>Kitchen Setup</h2>
+    <p>Enter your Firebase Realtime Database URL below.<br>
+       You can find this in the main app under ⚙ Settings → Firebase Database URL.</p>
+    <input id="fb-url-input" type="url" placeholder="https://your-project-default-rtdb.firebaseio.com" autocomplete="off">
+    <button class="btn btn-success" style="width:100%" onclick="saveSetup()">Connect to Firebase</button>
   </div>
 
+  <!-- LOADING -->
+  <div class="screen" id="screen-loading">
+    <div class="spinner"></div>
+    <div>Loading from Firebase…</div>
+  </div>
+
+  <!-- PREP & PRODUCTION TAB -->
+  <div class="screen" id="screen-main">
+    <div class="tab-content active" id="tab-prep">
+
+      <div class="status-bar">
+        <div class="dot" id="fb-status-dot"></div>
+        <span id="fb-status-text">Connected</span>
+        <button class="btn btn-sm btn-ghost" style="margin-left:auto;padding:4px 10px;font-size:.72rem" onclick="refreshAll()">↺ Refresh</button>
+      </div>
+
+      <div class="date-nav">
+        <button class="nav-btn" id="btn-prev" onclick="changeDate(-1)">&#8249;</button>
+        <div id="date-label"></div>
+        <button class="nav-btn disabled" id="btn-next" onclick="changeDate(1)">&#8250;</button>
+      </div>
+
+      <div id="overall-progress">
+        <div class="pbar" style="height:9px"><div class="pfill" id="overall-pfill"></div></div>
+        <span class="prog-label" id="overall-label"></span>
+      </div>
+
+      <div class="section-head">
+        <span class="s-label">Prep Tasks</span>
+      </div>
+      <div id="prep-content"></div>
+
+      <div class="section-head" style="margin-top:4px">
+        <span class="s-label">Production</span>
+        <div class="s-right">
+          <span id="prod-count" style="font-size:.78rem;color:var(--muted)"></span>
+          <button class="btn btn-sm btn-primary" id="log-prod-btn" onclick="toggleLogForm()" style="display:none">+ Log Batch</button>
+        </div>
+      </div>
+      <div id="log-prod-form" style="display:none">
+        <h4>Log Production Batch</h4>
+        <select id="lp-recipe"><option value="">— Select recipe —</option></select>
+        <div class="form-row">
+          <div>
+            <input type="number" id="lp-batches" placeholder="# of batches" min="1" step="1" value="1">
+          </div>
+          <div>
+            <input type="text" id="lp-note" placeholder="Note (optional)">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-ghost btn-sm" onclick="toggleLogForm()">Cancel</button>
+          <button class="btn btn-success btn-sm" onclick="submitProduction()">Submit</button>
+        </div>
+      </div>
+      <div id="prod-content"></div>
+
+    </div><!-- /tab-prep -->
+
+    <!-- STOCK TAKE TAB -->
+    <div class="tab-content" id="tab-stock">
+      <div class="status-bar">
+        <div class="dot green"></div>
+        <span id="stock-status-text">Tap each ingredient to enter count</span>
+        <button class="btn btn-sm btn-ghost" style="margin-left:auto;padding:4px 10px;font-size:.72rem" onclick="clearStockCount()">Clear</button>
+      </div>
+      <div id="stock-content"></div>
+      <div class="stock-submit-bar">
+        <span class="stock-submit-info" id="stock-submit-info">0 items counted</span>
+        <button class="btn btn-success" id="stock-submit-btn" onclick="submitStockCount()" disabled>Submit Count</button>
+      </div>
+
+      <div class="section-head" style="margin-top:4px">
+        <span class="s-label">Recent Submissions</span>
+      </div>
+      <div id="stock-history" style="padding-bottom:80px"></div>
+    </div><!-- /tab-stock -->
+
+  </div><!-- /screen-main -->
 </main>
 
-<script src="data/db.js"></script>
+<div id="toast"></div>
+
 <script>
-// ── STATE ─────────────────────────────────────────────────────────────────
-let viewDate = todayStr();
-let currentTab = 'prep';
+// ── UTILS ─────────────────────────────────────────────────────────────────
+const todayStr = () => new Date().toISOString().slice(0,10);
+const uid      = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 
 const PREP_CATS = ['Slice','Cook','Prep','Mix','Portion','Wash & Portion','Precook'];
 
+function toast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'show ' + type;
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.className = '', 2800);
+}
+
+function fmtDate(str) {
+  if (!str) return '';
+  const d = new Date(str + 'T00:00:00');
+  return d.toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let fbUrl       = localStorage.getItem('rcc-kitchen-fb-url') || '';
+let viewDate    = todayStr();
+let currentTab  = 'prep';
+
+let prepTasks     = [];
+let batchRecipes  = [];
+let ingredients   = [];
+let allProductions = null;   // loaded lazily, null = not yet fetched
+let allCounts      = null;   // loaded lazily
+
+let prepChecksCache = {};    // { 'YYYY-MM-DD': { taskId: { done, actualQty } } }
+let countLines      = {};    // { ingId: qty (string) }
+
+// ── FIREBASE HELPERS ──────────────────────────────────────────────────────
+async function fbGet(path) {
+  const r = await fetch(fbUrl.replace(/\/$/, '') + path + '.json');
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+async function fbPut(path, data) {
+  const r = await fetch(fbUrl.replace(/\/$/, '') + path + '.json', {
+    method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+async function fbPost(path, data) {
+  const r = await fetch(fbUrl.replace(/\/$/, '') + path + '.json', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+
+// ── SETUP ────────────────────────────────────────────────────────────────
+function showSetup() {
+  document.getElementById('screen-main').classList.remove('active');
+  document.getElementById('screen-loading').classList.remove('active');
+  document.getElementById('screen-setup').classList.add('active');
+  document.getElementById('main-nav').style.display = 'none';
+  document.getElementById('fb-url-input').value = fbUrl;
+}
+
+function saveSetup() {
+  const url = document.getElementById('fb-url-input').value.trim();
+  if (!url.startsWith('http')) { toast('Please enter a valid Firebase URL.', 'error'); return; }
+  fbUrl = url.replace(/\/$/, '');
+  localStorage.setItem('rcc-kitchen-fb-url', fbUrl);
+  init();
+}
+
 // ── INIT ─────────────────────────────────────────────────────────────────
-(async () => {
-  await loadDB();
-  renderDateLabel();
-  renderPrepProd();
-})();
+async function init() {
+  if (!fbUrl) { showSetup(); return; }
 
-// Touch swipe support
-let touchStartX = 0;
-document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-document.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  if (currentTab !== 'prep') return;
-  if (Math.abs(dx) > 60) dx < 0 ? changeDate(1) : changeDate(-1);
-}, { passive: true });
+  document.getElementById('screen-setup').classList.remove('active');
+  document.getElementById('screen-main').classList.remove('active');
+  document.getElementById('screen-loading').classList.add('active');
 
-// ── TAB SWITCHING ────────────────────────────────────────────────────────
+  try {
+    const [tasks, recipes, ings] = await Promise.all([
+      fbGet('/rcc/prepTasks').catch(() => []),
+      fbGet('/rcc/batchRecipes').catch(() => []),
+      fbGet('/rcc/ingredients').catch(() => []),
+    ]);
+    prepTasks    = Array.isArray(tasks)   ? tasks   : [];
+    batchRecipes = Array.isArray(recipes) ? recipes : [];
+    ingredients  = Array.isArray(ings)    ? ings    : [];
+
+    document.getElementById('screen-loading').classList.remove('active');
+    document.getElementById('screen-main').classList.add('active');
+    document.getElementById('main-nav').style.display = '';
+
+    setFbStatus(true);
+    renderDateLabel();
+    await Promise.all([
+      loadPrepChecks(viewDate),
+      loadProductionsForDate(viewDate),
+    ]);
+    renderPrepProd();
+    populateLogForm();
+  } catch(e) {
+    document.getElementById('screen-loading').classList.remove('active');
+    document.getElementById('screen-setup').classList.add('active');
+    toast('Failed to connect: ' + e.message, 'error');
+  }
+}
+
+function setFbStatus(ok) {
+  const dot = document.getElementById('fb-status-dot');
+  const txt = document.getElementById('fb-status-text');
+  dot.className = 'dot ' + (ok ? 'green' : 'red');
+  txt.textContent = ok ? 'Firebase connected' : 'Connection error';
+}
+
+async function refreshAll() {
+  allProductions = null; allCounts = null; prepChecksCache = {};
+  await init();
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────────
 function showTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('header nav button').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('#main-nav button').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   document.getElementById('tab-btn-' + tab).classList.add('active');
-  if (tab === 'stock') renderStock();
+  if (tab === 'stock') { renderStock(); loadStockHistory(); }
 }
 
-// ── DATE NAVIGATION ──────────────────────────────────────────────────────
+// ── DATE NAVIGATION ───────────────────────────────────────────────────────
 function changeDate(delta) {
   const d = new Date(viewDate + 'T00:00:00');
   d.setDate(d.getDate() + delta);
-  const next = d.toISOString().slice(0, 10);
-  if (next > todayStr()) return; // no future
+  const next = d.toISOString().slice(0,10);
+  if (next > todayStr()) return;
   viewDate = next;
   renderDateLabel();
-  renderPrepProd();
+  loadPrepChecks(viewDate).then(() => renderPrepProd());
 }
 
 function renderDateLabel() {
-  const d = new Date(viewDate + 'T00:00:00');
   const isToday = viewDate === todayStr();
-  const label = d.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   document.getElementById('date-label').innerHTML =
-    label + (isToday ? ' <span id="date-today-badge">TODAY</span>' : '');
+    fmtDate(viewDate) + (isToday ? ' <span class="today-badge">TODAY</span>' : '');
   document.getElementById('btn-next').classList.toggle('disabled', isToday);
+  document.getElementById('btn-prev').classList.remove('disabled');
+  // Show log button only for today
+  const logBtn = document.getElementById('log-prod-btn');
+  if (logBtn) logBtn.style.display = isToday ? '' : 'none';
 }
 
-// ── PREP & PRODUCTION RENDER ─────────────────────────────────────────────
+// ── SWIPE ─────────────────────────────────────────────────────────────────
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend',   e => {
+  if (currentTab !== 'prep') return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 60) dx < 0 ? changeDate(1) : changeDate(-1);
+}, { passive: true });
+
+// ── PREP CHECKS ───────────────────────────────────────────────────────────
+async function loadPrepChecks(date) {
+  if (prepChecksCache[date] !== undefined) return;
+  try {
+    const data = await fbGet('/rcc/prepDaily/' + date);
+    prepChecksCache[date] = data?.checks || {};
+  } catch(e) {
+    prepChecksCache[date] = {};
+  }
+}
+
+// ── PREP RENDER ───────────────────────────────────────────────────────────
 function renderPrepProd() {
   const isToday = viewDate === todayStr();
-  const checks = db.prepDailyHistory?.[viewDate]?.checks || {};
-  const tasks = db.prepTasks || [];
+  const checks  = prepChecksCache[viewDate] || {};
+  const tasks   = prepTasks;
 
   const total = tasks.length;
-  const done = tasks.filter(t => checks[t.id]?.done).length;
-  const pct = total ? Math.round(done / total * 100) : 0;
+  const done  = tasks.filter(t => checks[t.id]?.done).length;
+  const pct   = total ? Math.round(done / total * 100) : 0;
 
-  // Overall progress
   document.getElementById('overall-pfill').style.cssText =
     `width:${pct}%;background:${pct===100?'var(--accent2)':'var(--accent)'}`;
   document.getElementById('overall-label').textContent = `${done} / ${total} prep tasks done`;
 
-  // Group tasks by category
+  // Group by category
   const grouped = {};
   PREP_CATS.forEach(c => grouped[c] = []);
-  tasks.forEach(t => {
-    if (!grouped[t.category]) grouped[t.category] = [];
-    grouped[t.category].push(t);
-  });
-
-  // All categories including custom
+  tasks.forEach(t => { if (!grouped[t.category]) grouped[t.category] = []; grouped[t.category].push(t); });
   const allCats = [...PREP_CATS, ...Object.keys(grouped).filter(c => !PREP_CATS.includes(c))];
 
-  const html = allCats.map(cat => {
-    const catTasks = (grouped[cat] || []).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  document.getElementById('prep-content').innerHTML = allCats.map(cat => {
+    const catTasks = (grouped[cat] || []).sort((a,b) => (a.order??0)-(b.order??0));
     if (!catTasks.length) return '';
-
     const catDone = catTasks.filter(t => checks[t.id]?.done).length;
-    const catPct = catTasks.length ? Math.round(catDone / catTasks.length * 100) : 0;
-
-    const rows = catTasks.map(t => {
-      const c = checks[t.id] || {};
-      const isDone = !!c.done;
-      const isEditable = isToday;
-      return `
-        <div class="task-row${isDone ? ' done' : ''}">
-          <input type="checkbox" ${isDone ? 'checked' : ''} ${isEditable ? '' : 'disabled'}
-            onchange="kitchenToggleTask('${t.id}')">
-          <span class="task-name${isDone ? ' done' : ''}">${t.name}</span>
-          ${t.targetQty ? `<span class="task-target">${t.targetQty}</span>` : '<span class="task-target"></span>'}
-          <input type="text" class="task-actual"
-            value="${c.actualQty || ''}"
-            placeholder="actual"
-            ${(isDone && isEditable) ? '' : 'disabled'}
-            onchange="kitchenSetActualQty('${t.id}', this.value)">
-        </div>`;
-    }).join('');
-
+    const catPct  = Math.round(catDone / catTasks.length * 100);
     return `
       <div class="cat-head">
         <span class="cat-name">${cat}</span>
         <div class="pbar"><div class="pfill" style="width:${catPct}%;background:${catPct===100?'var(--accent2)':'var(--accent)'}"></div></div>
         <span class="cat-count">${catDone}/${catTasks.length}</span>
       </div>
-      ${rows}`;
-  }).join('');
+      ${catTasks.map(t => {
+        const c = checks[t.id] || {};
+        const isDone = !!c.done;
+        return `
+          <div class="task-row${isDone?' done':''}">
+            <input type="checkbox" ${isDone?'checked':''} ${isToday?'':'disabled'}
+              onchange="kitchenToggleTask('${t.id}')">
+            <span class="task-name${isDone?' done':''}">${t.name}</span>
+            <span class="task-target">${t.targetQty||''}</span>
+            <input type="text" class="task-actual" value="${c.actualQty||''}"
+              placeholder="actual" ${(isDone&&isToday)?'':'disabled'}
+              onchange="kitchenSetActualQty('${t.id}',this.value)">
+          </div>`;
+      }).join('')}`;
+  }).join('') || '<div class="empty">No prep tasks synced yet.<br>Go to main app ⚙ Settings → ↑ Sync Prep Tasks</div>';
 
-  document.getElementById('prep-content').innerHTML = html || '<div class="empty">No prep tasks set up yet.</div>';
+  renderProduction();
+}
 
-  // Production
-  const batches = (db.productionBatches || []).filter(b => b.date === viewDate);
-  document.getElementById('prod-count').textContent = batches.length ? `${batches.length} logged` : '';
+async function kitchenToggleTask(taskId) {
+  if (viewDate !== todayStr()) return;
+  const checks = { ...(prepChecksCache[viewDate] || {}) };
+  const c = checks[taskId] || {};
+  checks[taskId] = { ...c, done: !c.done };
+  prepChecksCache[viewDate] = checks;
+  renderPrepProd();
+  try {
+    await fbPut('/rcc/prepDaily/' + viewDate, { checks });
+  } catch(e) { toast('Save failed: ' + e.message, 'error'); setFbStatus(false); }
+}
 
-  if (!batches.length) {
-    document.getElementById('prod-content').innerHTML = '<div class="empty">No production batches logged for this date.</div>';
-  } else {
-    document.getElementById('prod-content').innerHTML = batches.map(b => {
-      const recipe = (db.recipes || []).find(r => r.id === b.recipeId);
-      const recipeName = recipe?.name || 'Unknown recipe';
-      const batchCount = b.batchesLogged ?? 1;
-      const portions = b.portionsProduced ?? 0;
-      return `
-        <div class="prod-card">
-          <div class="prod-recipe">${recipeName}</div>
-          <div class="prod-meta">${batchCount} batch${batchCount !== 1 ? 'es' : ''} &nbsp;·&nbsp; ${portions} portion${portions !== 1 ? 's' : ''} produced</div>
-          ${b.note ? `<div class="prod-note">📝 ${b.note}</div>` : ''}
-        </div>`;
-    }).join('');
+async function kitchenSetActualQty(taskId, val) {
+  if (viewDate !== todayStr()) return;
+  const checks = { ...(prepChecksCache[viewDate] || {}) };
+  checks[taskId] = { ...(checks[taskId]||{}), actualQty: val };
+  prepChecksCache[viewDate] = checks;
+  try {
+    await fbPut('/rcc/prepDaily/' + viewDate, { checks });
+  } catch(e) { toast('Save failed: ' + e.message, 'error'); setFbStatus(false); }
+}
+
+// ── PRODUCTION ────────────────────────────────────────────────────────────
+function populateLogForm() {
+  const sel = document.getElementById('lp-recipe');
+  sel.innerHTML = '<option value="">— Select recipe —</option>' +
+    batchRecipes.map(r => `<option value="${r.id}">${r.name} (yield: ${r.batchYield})</option>`).join('');
+}
+
+function toggleLogForm() {
+  const form = document.getElementById('log-prod-form');
+  const showing = form.style.display !== 'none';
+  form.style.display = showing ? 'none' : '';
+  if (!showing) { document.getElementById('lp-recipe').value = ''; document.getElementById('lp-batches').value = '1'; document.getElementById('lp-note').value = ''; }
+}
+
+async function submitProduction() {
+  const recipeId = document.getElementById('lp-recipe').value;
+  const batches  = parseInt(document.getElementById('lp-batches').value) || 0;
+  const note     = document.getElementById('lp-note').value.trim();
+  if (!recipeId) { toast('Select a recipe.', 'error'); return; }
+  if (batches < 1) { toast('Enter at least 1 batch.', 'error'); return; }
+  const recipe = batchRecipes.find(r => r.id === recipeId);
+  const payload = { id: uid(), date: todayStr(), recipeId, batchesLogged: batches, note };
+  try {
+    await fbPost('/rcc/pendingProductions', payload);
+    allProductions = null; // invalidate cache
+    toggleLogForm();
+    toast(`${batches} batch${batches!==1?'es':''} of ${recipe?.name||'recipe'} submitted.`);
+    await loadProductionsForDate(viewDate);
+    renderProduction();
+  } catch(e) { toast('Submit failed: ' + e.message, 'error'); setFbStatus(false); }
+}
+
+async function loadProductionsForDate(date) {
+  if (allProductions === null) {
+    try {
+      const data = await fbGet('/rcc/pendingProductions');
+      allProductions = data ? Object.values(data) : [];
+    } catch(e) { allProductions = []; setFbStatus(false); }
   }
 }
 
-// ── PREP INTERACTION (today only) ────────────────────────────────────────
-function kitchenToggleTask(taskId) {
-  if (viewDate !== todayStr()) return;
-  if (!db.prepDailyHistory) db.prepDailyHistory = {};
-  const day = db.prepDailyHistory[viewDate] || { checks: {} };
-  const c = day.checks[taskId] || {};
-  day.checks[taskId] = { ...c, done: !c.done };
-  db.prepDailyHistory[viewDate] = day;
-  saveDB();
-  renderPrepProd();
+function renderProduction() {
+  const batches = (allProductions || []).filter(b => b.date === viewDate);
+  document.getElementById('prod-count').textContent = batches.length ? `${batches.length} logged` : '';
+  document.getElementById('prod-content').innerHTML = !batches.length
+    ? '<div class="empty">No production batches for this date.</div>'
+    : batches.map(b => {
+        const recipe = batchRecipes.find(r => r.id === b.recipeId);
+        const n = b.batchesLogged ?? 1;
+        const portions = recipe ? n * (recipe.batchYield || 1) : '?';
+        return `
+          <div class="prod-card">
+            <div class="prod-recipe">${recipe?.name || 'Unknown recipe'}</div>
+            <div class="prod-meta">${n} batch${n!==1?'es':''} &nbsp;·&nbsp; ${portions} portion${portions!==1?'s':''}</div>
+            ${b.note ? `<div class="prod-note">📝 ${b.note}</div>` : ''}
+          </div>`;
+      }).join('');
 }
 
-function kitchenSetActualQty(taskId, val) {
-  if (viewDate !== todayStr()) return;
-  if (!db.prepDailyHistory) db.prepDailyHistory = {};
-  const day = db.prepDailyHistory[viewDate] || { checks: {} };
-  day.checks[taskId] = { ...(day.checks[taskId] || {}), actualQty: val };
-  db.prepDailyHistory[viewDate] = day;
-  saveDB();
-}
+// ── BOOT ──────────────────────────────────────────────────────────────────
+init();
 
-// ── STOCK RENDER ─────────────────────────────────────────────────────────
+// ── STOCK TAKE ────────────────────────────────────────────────────────────
 function renderStock() {
-  const ingredients = (db.ingredients || []).filter(i => !i.obsolete);
-
-  // Group by category
   const grouped = {};
   ingredients.forEach(i => {
-    const cat = i.category || 'Uncategorised';
+    const cat = i.category || 'Other';
     if (!grouped[cat]) grouped[cat] = [];
     grouped[cat].push(i);
   });
-
   const cats = Object.keys(grouped).sort();
-  const html = cats.map(cat => {
-    const items = grouped[cat].sort((a, b) => a.name.localeCompare(b.name));
-    const rows = items.map(i => {
-      const qty = parseFloat(i.totalBaseUnits || 0);
-      return `
-        <div class="stock-row${qty <= 0 ? ' zero' : ''}">
+  document.getElementById('stock-content').innerHTML = cats.map(cat => {
+    const items = grouped[cat].sort((a,b) => a.name.localeCompare(b.name));
+    return `<div class="stock-cat-head">${cat}</div>` +
+      items.map(i => `
+        <div class="stock-row">
           <span class="stock-name">${i.name}</span>
-          <span class="stock-qty">${qty % 1 === 0 ? qty : qty.toFixed(2)}</span>
-          <span class="stock-unit">${i.recipeUnit || ''}</span>
-        </div>`;
-    }).join('');
-    return `<div class="stock-cat-head">${cat}</div>${rows}`;
-  }).join('');
+          <span class="stock-unit-label">${i.recipeUnit||''}</span>
+          <input type="number" class="stock-input${countLines[i.id]?' filled':''}"
+            id="sc-${i.id}" value="${countLines[i.id]||''}"
+            placeholder="0" min="0" step="0.01"
+            oninput="updateCountLine('${i.id}',this.value)"
+            inputmode="decimal">
+        </div>`).join('');
+  }).join('') || '<div class="empty">No ingredients synced yet.<br>Go to main app ⚙ Settings → ↑ Sync Ingredients</div>';
+  updateStockSubmitBtn();
+}
 
-  document.getElementById('stock-content').innerHTML = html || '<div class="empty">No ingredients added yet.</div>';
+function updateCountLine(ingId, val) {
+  const el = document.getElementById('sc-' + ingId);
+  if (val && parseFloat(val) >= 0) {
+    countLines[ingId] = val;
+    el.classList.add('filled');
+  } else {
+    delete countLines[ingId];
+    el.classList.remove('filled');
+  }
+  updateStockSubmitBtn();
+}
+
+function updateStockSubmitBtn() {
+  const n = Object.keys(countLines).length;
+  document.getElementById('stock-submit-info').textContent = n ? `${n} item${n!==1?'s':''} counted` : '0 items counted';
+  document.getElementById('stock-submit-btn').disabled = n === 0;
+}
+
+function clearStockCount() {
+  if (Object.keys(countLines).length && !confirm('Clear all entered counts?')) return;
+  countLines = {};
+  renderStock();
+}
+
+async function submitStockCount() {
+  const n = Object.keys(countLines).length;
+  if (!n) return;
+  const date = todayStr();
+  const lines = Object.entries(countLines).map(([ingId, qty]) => {
+    const ing = ingredients.find(i => i.id === ingId) || {};
+    return { ingredientId: ingId, name: ing.name||ingId, closeQty: parseFloat(qty)||0, closeUnit: ing.recipeUnit||'each', openQty: 0, openUnit: ing.recipeUnit||'each' };
+  });
+  const payload = { id: uid(), date, dateFrom: date, dateTo: date, note: 'Tablet stock count — ' + fmtDate(date), lines };
+  try {
+    await fbPost('/rcc/pendingCounts', payload);
+    allCounts = null; // invalidate cache
+    countLines = {};
+    renderStock();
+    toast(`Stock count submitted (${n} items).`);
+    loadStockHistory();
+  } catch(e) { toast('Submit failed: ' + e.message, 'error'); setFbStatus(false); }
+}
+
+async function loadStockHistory() {
+  if (allCounts === null) {
+    try {
+      const data = await fbGet('/rcc/pendingCounts');
+      allCounts = data ? Object.values(data) : [];
+    } catch(e) { allCounts = []; }
+  }
+  const sorted = [...allCounts].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  document.getElementById('stock-history').innerHTML = !sorted.length
+    ? '<div class="empty">No stock counts submitted yet.</div>'
+    : sorted.slice(0,10).map(c => {
+        const itemCount = c.lines?.length || 0;
+        const preview = (c.lines||[]).slice(0,4).map(l => `${l.name}: ${l.closeQty} ${l.closeUnit}`).join(', ');
+        return `
+          <div class="history-card">
+            <div class="hc-date">${fmtDate(c.date)} · ${itemCount} items</div>
+            <div class="hc-lines">${preview}${itemCount>4?` +${itemCount-4} more…`:''}</div>
+          </div>`;
+      }).join('');
 }
 </script>
 </body>
