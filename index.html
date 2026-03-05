@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Tablet — Stock &amp; Production</title>
+  <title>Kitchen</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -11,615 +11,376 @@
       --border: #2e3147; --accent: #6c63ff; --accent2: #4ecca3;
       --danger: #ff6b6b; --warn: #ffd93d; --text: #e8e8f0; --muted: #8888aa;
     }
-    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; }
+
+    /* ── HEADER ── */
     header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
       background: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 16px 20px; display: flex; align-items: center; gap: 12px;
-      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; padding: 0 16px; height: 56px; gap: 16px;
     }
-    header h1 { font-size: 1.2rem; font-weight: 700; color: var(--accent2); }
-    #header-info { color: var(--muted); font-size: .82rem; margin-left: auto; }
-    .screen { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
-    .screen.active { display: block; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 14px; }
-    .btn { padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer; font-size: 1rem; font-weight: 600; transition: .2s; }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:active { opacity: .8; }
-    .btn-success { background: var(--accent2); color: #0f1117; }
-    .btn-success:active { opacity: .8; }
-    .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-    .btn-ghost:active { border-color: var(--accent); }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-block { width: 100%; display: block; margin-top: 10px; }
-    .btn-sm { padding: 8px 14px; font-size: .85rem; }
-    input, select {
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--text); padding: 12px 14px; border-radius: 8px;
-      font-size: 1rem; width: 100%; margin-top: 4px;
+    header .logo { font-size: 1.1rem; font-weight: 700; color: var(--accent2); white-space: nowrap; }
+    header nav { display: flex; gap: 4px; margin-left: auto; }
+    header nav button {
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      font-size: .85rem; font-weight: 600; padding: 8px 14px; border-radius: 6px;
+      transition: .15s; letter-spacing: .02em;
     }
-    input:focus, select:focus { outline: none; border-color: var(--accent); }
-    label { font-size: .8rem; color: var(--muted); display: block; margin-top: 10px; }
-    .form-row { display: grid; gap: 10px; margin-bottom: 12px; }
-    .c2 { grid-template-columns: 1fr 1fr; }
-    .muted { color: var(--muted); font-size: .78rem; }
-    .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
-    .category-hdr {
-      font-size: .72rem; text-transform: uppercase; letter-spacing: .06em;
-      color: var(--muted); padding: 8px 0 4px; margin-top: 4px;
-      border-bottom: 1px solid var(--border); margin-bottom: 4px;
+    header nav button.active { background: var(--accent); color: #fff; }
+
+    /* ── CONTENT ── */
+    main { padding-top: 56px; min-height: 100vh; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── DATE NAV ── */
+    .date-nav {
+      display: flex; align-items: center; justify-content: center; gap: 0;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 12px 8px; position: sticky; top: 56px; z-index: 40;
     }
-    /* Ingredient row */
-    .ing-row {
-      display: grid;
-      grid-template-columns: 1fr 130px 100px;
-      gap: 10px; align-items: end;
-      padding: 12px 0; border-bottom: 1px solid var(--border);
+    .date-nav button {
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      font-size: 1.6rem; padding: 4px 18px; line-height: 1; user-select: none;
+      transition: color .15s;
     }
-    .ing-row:last-child { border-bottom: none; }
-    .ing-name { font-size: .95rem; font-weight: 600; padding-top: 10px; }
-    .ing-unit { font-size: .73rem; color: var(--muted); margin-top: 2px; }
-    @media (max-width: 500px) {
-      .ing-row { grid-template-columns: 1fr 110px 85px; gap: 6px; }
-      input[type=number] { font-size: 1.05rem; }
+    .date-nav button:active { color: var(--accent2); }
+    .date-nav button.disabled { opacity: .2; pointer-events: none; }
+    #date-label {
+      font-size: 1.05rem; font-weight: 700; min-width: 220px;
+      text-align: center; user-select: none;
     }
-    /* Toast */
-    #toast {
-      position: fixed; bottom: 130px; right: 20px;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 8px; padding: 12px 20px; font-size: .9rem;
-      z-index: 200; opacity: 0; transition: .3s; pointer-events: none;
-      max-width: 300px;
+    #date-today-badge {
+      font-size: .7rem; color: var(--accent2); margin-left: 8px;
+      background: rgba(78,204,163,.15); padding: 2px 7px; border-radius: 10px;
+      vertical-align: middle;
     }
-    #toast.show { opacity: 1; }
-    #toast.success { border-color: var(--accent2); color: var(--accent2); }
-    #toast.error { border-color: var(--danger); color: var(--danger); }
-    /* Spinner */
-    .spinner {
-      width: 40px; height: 40px; border: 3px solid var(--border);
-      border-top-color: var(--accent2); border-radius: 50%;
-      animation: spin .8s linear infinite; margin: 30px auto;
+
+    /* ── PROGRESS BAR ── */
+    .pbar { height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; flex: 1; }
+    .pfill { height: 100%; border-radius: 4px; transition: width .3s; }
+
+    /* ── SECTION HEADER ── */
+    .section-head {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 16px; background: var(--surface2);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    /* Success screen */
-    .success-icon { font-size: 5rem; text-align: center; margin: 30px 0; }
-    /* Fixed submit bar (above tab bar) */
-    .submit-bar {
-      position: fixed; bottom: 56px; left: 0; right: 0;
-      background: var(--surface); border-top: 1px solid var(--border);
-      padding: 12px 20px; display: flex; gap: 10px; align-items: center;
+    .section-head .label {
+      font-size: .78rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .06em; color: var(--muted);
     }
-    .submit-bar .spacer { flex: 1; }
-    /* Tab bar */
-    .tab-bar {
-      position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
-      background: var(--surface); border-top: 2px solid var(--border);
-      display: flex; z-index: 100;
+    .section-head .count { font-size: .78rem; color: var(--muted); white-space: nowrap; margin-left: auto; }
+
+    /* ── CATEGORY HEADER ── */
+    .cat-head {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 16px 8px 14px;
+      background: rgba(35,38,54,.8);
+      border-bottom: 1px solid var(--border);
     }
-    .tab-btn {
-      flex: 1; border: none; background: transparent; color: var(--muted);
-      font-size: .95rem; font-weight: 600; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      transition: .2s;
+    .cat-head .cat-name { font-size: .8rem; font-weight: 700; letter-spacing: .04em; }
+    .cat-head .cat-count { font-size: .75rem; color: var(--muted); margin-left: auto; white-space: nowrap; }
+
+    /* ── TASK ROW ── */
+    .task-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 16px; min-height: 52px;
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
     }
-    .tab-btn.active { color: var(--accent2); border-top: 2px solid var(--accent2); margin-top: -2px; }
-    .tab-btn:active { opacity: .7; }
-    /* Main content padding to clear fixed bars */
-    .main-content { padding-bottom: 140px; }
-    .prod-content { padding-bottom: 80px; }
-    /* Count badge */
-    .qty-entered { border-color: var(--accent2) !important; }
-    .setup-info { background: var(--surface2); border-radius: 8px; padding: 12px; font-size: .82rem; color: var(--muted); margin-top: 12px; line-height: 1.6; }
-    /* Preview box */
-    .preview-box {
-      background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
-      padding: 14px; margin-top: 12px; font-size: .95rem; line-height: 1.8; text-align: center;
+    .task-row.done { background: rgba(78,204,163,.07); }
+    .task-row input[type=checkbox] {
+      width: 22px; height: 22px; cursor: pointer;
+      accent-color: var(--accent2); flex-shrink: 0;
     }
-    /* Big number input for production */
-    #prod-batches { font-size: 2.2rem !important; text-align: center; font-weight: 700; padding: 16px; }
+    .task-row input[type=checkbox]:disabled { opacity: .4; }
+    .task-name { flex: 1; font-size: .95rem; }
+    .task-name.done { color: var(--muted); text-decoration: line-through; }
+    .task-target { font-size: .78rem; color: var(--muted); white-space: nowrap; min-width: 60px; text-align: right; }
+    .task-actual {
+      width: 100px; padding: 6px 10px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 6px; color: var(--text);
+      font-size: .82rem; flex-shrink: 0;
+    }
+    .task-actual:disabled { opacity: .3; }
+    .task-actual:focus { outline: none; border-color: var(--accent2); }
+
+    /* ── PRODUCTION CARD ── */
+    .prod-card {
+      margin: 10px 14px; padding: 14px 16px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .prod-card .prod-recipe { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .prod-card .prod-meta { font-size: .82rem; color: var(--muted); }
+    .prod-card .prod-note { font-size: .82rem; color: var(--warn); margin-top: 6px; }
+
+    /* ── EMPTY STATE ── */
+    .empty { text-align: center; color: var(--muted); padding: 40px 20px; font-size: .9rem; }
+
+    /* ── STOCK ── */
+    .stock-section { padding: 0; }
+    .stock-cat-head {
+      padding: 9px 16px;
+      background: var(--surface2); border-bottom: 1px solid var(--border);
+      border-top: 1px solid var(--border);
+      font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted);
+    }
+    .stock-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 16px; border-bottom: 1px solid var(--border);
+      font-size: .88rem;
+    }
+    .stock-row.zero { opacity: .35; }
+    .stock-name { flex: 1; }
+    .stock-qty { font-weight: 700; color: var(--accent2); min-width: 60px; text-align: right; }
+    .stock-unit { color: var(--muted); min-width: 36px; font-size: .78rem; }
+    .stock-note { font-size: .72rem; color: var(--muted); padding: 8px 16px 4px; }
+
+    /* ── OVERALL PROGRESS ── */
+    #overall-progress {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 16px; background: var(--bg);
+    }
+    #overall-progress .prog-label { font-size: .82rem; color: var(--muted); white-space: nowrap; }
   </style>
 </head>
 <body>
 
 <header>
-  <span style="font-size:1.4rem" id="header-icon">📦</span>
-  <h1 id="header-title">Stock Count</h1>
-  <span id="header-info"></span>
+  <span class="logo">🍽 Kitchen</span>
+  <nav>
+    <button class="active" id="tab-btn-prep" onclick="showTab('prep')">Prep &amp; Production</button>
+    <button id="tab-btn-stock" onclick="showTab('stock')">Stock</button>
+  </nav>
 </header>
 
-<!-- ── SETUP SCREEN ───────────────────────────────────────────────────── -->
-<div id="screen-setup" class="screen active">
-  <div class="card" style="margin-top:20px">
-    <h2 style="font-size:1.1rem;margin-bottom:8px">Connect to Firebase</h2>
-    <p class="muted" style="margin-bottom:16px;line-height:1.6">
-      Enter the Firebase Realtime Database URL provided by the manager.
-      This only needs to be set up once on this tablet.
-    </p>
-    <label>Firebase Database URL *</label>
-    <input id="setup-fb-url" placeholder="https://your-project-default-rtdb.firebaseio.com">
-    <div class="setup-info">
-      The URL looks like:<br>
-      <strong style="color:var(--text)">https://my-restaurant-abc123-default-rtdb.firebaseio.com</strong><br><br>
-      Ask your manager for this URL — they can find it in Settings → Firebase section.
-    </div>
-    <button class="btn btn-primary btn-block" onclick="saveSetup()">Save &amp; Connect →</button>
-  </div>
-</div>
+<main>
 
-<!-- ── LOADING SCREEN ─────────────────────────────────────────────────── -->
-<div id="screen-loading" class="screen">
-  <div class="card" style="margin-top:20px;text-align:center">
-    <div class="spinner"></div>
-    <div class="muted" id="loading-msg">Loading data from Firebase…</div>
-  </div>
-</div>
+  <!-- PREP & PRODUCTION TAB -->
+  <div class="tab-content active" id="tab-prep">
 
-<!-- ── COUNT SCREEN ───────────────────────────────────────────────────── -->
-<div id="screen-count" class="screen">
-  <div class="main-content">
-    <div class="card">
-      <div class="form-row c2">
-        <div>
-          <label>Period Start *</label>
-          <input id="cnt-from" type="date">
-        </div>
-        <div>
-          <label>Period End *</label>
-          <input id="cnt-to" type="date">
-        </div>
-      </div>
-      <div>
-        <label>Note <span class="muted">(optional, e.g. "Week 8")</span></label>
-        <input id="cnt-note" placeholder="Optional note">
-      </div>
+    <!-- Date nav -->
+    <div class="date-nav">
+      <button id="btn-prev" onclick="changeDate(-1)">&#8249;</button>
+      <div id="date-label"></div>
+      <button id="btn-next" onclick="changeDate(1)">&#8250;</button>
     </div>
 
-    <div id="ing-list"></div>
-  </div>
-
-  <!-- Fixed bottom bar for count (sits above the tab bar) -->
-  <div class="submit-bar">
-    <button class="btn btn-ghost btn-sm" onclick="reloadData()" title="Reload">↺ Refresh</button>
-    <button class="btn btn-ghost btn-sm" onclick="clearSetup()" title="Change Firebase URL">⚙ Setup</button>
-    <div class="spacer"></div>
-    <button class="btn btn-success" onclick="submitCount()">✓ Submit Count</button>
-  </div>
-</div>
-
-<!-- ── PRODUCTION SCREEN ───────────────────────────────────────────────── -->
-<div id="screen-production" class="screen">
-  <div class="prod-content">
-    <div class="card" style="margin-top:0">
-      <label style="font-size:.85rem;color:var(--muted)">Batch Recipe *</label>
-      <select id="prod-recipe" onchange="updateProdPreview()" style="font-size:1.05rem;margin-top:4px">
-        <option value="">— Select batch recipe —</option>
-      </select>
-
-      <label style="margin-top:16px">Batches Made *</label>
-      <input type="number" id="prod-batches" min="1" step="1"
-        placeholder="0" oninput="updateProdPreview()">
-
-      <div id="prod-preview"></div>
-
-      <div class="form-row c2" style="margin-top:14px">
-        <div>
-          <label>Date *</label>
-          <input type="date" id="prod-date">
-        </div>
-        <div>
-          <label>Note (optional)</label>
-          <input id="prod-note" placeholder="e.g. morning run">
-        </div>
-      </div>
-
-      <button class="btn btn-success btn-block"
-        style="margin-top:20px;padding:16px;font-size:1.05rem"
-        onclick="submitProduction()">
-        ✓ Submit Production Log
-      </button>
+    <!-- Overall prep progress -->
+    <div id="overall-progress">
+      <div class="pbar" style="height:8px"><div class="pfill" id="overall-pfill"></div></div>
+      <span class="prog-label" id="overall-label"></span>
     </div>
 
-    <div style="text-align:center;margin-top:8px">
-      <button class="btn btn-ghost btn-sm" onclick="reloadData()">↺ Refresh recipes</button>
-      <button class="btn btn-ghost btn-sm" onclick="clearSetup()">⚙ Setup</button>
+    <!-- Prep tasks rendered here -->
+    <div id="prep-content"></div>
+
+    <!-- Production section -->
+    <div class="section-head" style="margin-top:6px">
+      <span class="label">Production Batches</span>
+      <span class="count" id="prod-count"></span>
     </div>
+    <div id="prod-content"></div>
+
+  </div><!-- /tab-prep -->
+
+  <!-- STOCK TAB -->
+  <div class="tab-content" id="tab-stock">
+    <div class="stock-note">Based on cumulative purchase history</div>
+    <div id="stock-content"></div>
   </div>
-</div>
 
-<!-- ── SUCCESS SCREEN ─────────────────────────────────────────────────── -->
-<div id="screen-success" class="screen">
-  <div class="card" style="margin-top:20px;text-align:center;padding:40px 20px">
-    <div class="success-icon">✅</div>
-    <h2 style="font-size:1.3rem;margin-bottom:12px;color:var(--accent2)" id="success-title">Submitted!</h2>
-    <p style="color:var(--muted);margin-bottom:8px;line-height:1.7">
-      Saved to Firebase. The manager can import it into the desktop app.
-    </p>
-    <div id="success-summary" class="setup-info" style="text-align:left;margin-bottom:20px"></div>
-    <button class="btn btn-primary btn-block" id="success-new-btn" onclick="startNewCount()">+ Start Another Count</button>
-    <button class="btn btn-ghost btn-block" id="success-switch-btn" onclick="switchToOtherMode()">Switch to Production</button>
-  </div>
-</div>
+</main>
 
-<!-- Tab bar (shown on count / production screens) -->
-<div id="tab-bar" class="tab-bar" style="display:none">
-  <button class="tab-btn active" id="tab-count-btn" onclick="switchTab('count')">
-    📦 Stock Count
-  </button>
-  <button class="tab-btn" id="tab-prod-btn" onclick="switchTab('production')">
-    🍳 Production
-  </button>
-</div>
-
-<div id="toast"></div>
-
+<script src="data/db.js"></script>
 <script>
 // ── STATE ─────────────────────────────────────────────────────────────────
-const DEFAULT_FB_URL = 'https://restaurant-cost-app-default-rtdb.asia-southeast1.firebasedatabase.app';
-let fbUrl = '';
-let ingredients  = [];  // [{id, name, category, recipeUnit, defaultUnit}]
-let batchRecipes = [];  // [{id, name, batchYield}]
-let countLines   = {};  // {ingId: {qty, unit}}
-let currentTab        = 'count';
-let lastSubmittedMode = 'count';
+let viewDate = todayStr();
+let currentTab = 'prep';
 
-// ── UTILS ─────────────────────────────────────────────────────────────────
-const uid       = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-const todayStr  = () => new Date().toISOString().slice(0, 10);
-const sevenDaysAgo = () => {
-  const d = new Date(); d.setDate(d.getDate() - 7); return d.toISOString().slice(0, 10);
-};
+const PREP_CATS = ['Slice','Cook','Prep','Mix','Portion','Wash & Portion','Precook'];
 
-function toast(msg, type = 'success') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'show ' + type;
-  setTimeout(() => t.className = '', 3500);
+// ── INIT ─────────────────────────────────────────────────────────────────
+(async () => {
+  await loadDB();
+  renderDateLabel();
+  renderPrepProd();
+})();
+
+// Touch swipe support
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (currentTab !== 'prep') return;
+  if (Math.abs(dx) > 60) dx < 0 ? changeDate(1) : changeDate(-1);
+}, { passive: true });
+
+// ── TAB SWITCHING ────────────────────────────────────────────────────────
+function showTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('header nav button').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('tab-btn-' + tab).classList.add('active');
+  if (tab === 'stock') renderStock();
 }
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + id).classList.add('active');
+// ── DATE NAVIGATION ──────────────────────────────────────────────────────
+function changeDate(delta) {
+  const d = new Date(viewDate + 'T00:00:00');
+  d.setDate(d.getDate() + delta);
+  const next = d.toISOString().slice(0, 10);
+  if (next > todayStr()) return; // no future
+  viewDate = next;
+  renderDateLabel();
+  renderPrepProd();
 }
 
-// ── FIREBASE REST API ─────────────────────────────────────────────────────
-function fbBase() { return fbUrl.replace(/\/$/, ''); }
-
-async function fbGet(path) {
-  const res = await fetch(fbBase() + path + '.json');
-  if (!res.ok) throw new Error('Firebase read failed (' + res.status + ')');
-  return res.json();
+function renderDateLabel() {
+  const d = new Date(viewDate + 'T00:00:00');
+  const isToday = viewDate === todayStr();
+  const label = d.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('date-label').innerHTML =
+    label + (isToday ? ' <span id="date-today-badge">TODAY</span>' : '');
+  document.getElementById('btn-next').classList.toggle('disabled', isToday);
 }
 
-async function fbPut(path, data) {
-  const res = await fetch(fbBase() + path + '.json', {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
+// ── PREP & PRODUCTION RENDER ─────────────────────────────────────────────
+function renderPrepProd() {
+  const isToday = viewDate === todayStr();
+  const checks = db.prepDailyHistory?.[viewDate]?.checks || {};
+  const tasks = db.prepTasks || [];
+
+  const total = tasks.length;
+  const done = tasks.filter(t => checks[t.id]?.done).length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+
+  // Overall progress
+  document.getElementById('overall-pfill').style.cssText =
+    `width:${pct}%;background:${pct===100?'var(--accent2)':'var(--accent)'}`;
+  document.getElementById('overall-label').textContent = `${done} / ${total} prep tasks done`;
+
+  // Group tasks by category
+  const grouped = {};
+  PREP_CATS.forEach(c => grouped[c] = []);
+  tasks.forEach(t => {
+    if (!grouped[t.category]) grouped[t.category] = [];
+    grouped[t.category].push(t);
   });
-  if (!res.ok) throw new Error('Firebase write failed (' + res.status + ')');
-  return res.json();
-}
 
-// ── SETUP ─────────────────────────────────────────────────────────────────
-function saveSetup() {
-  const url = document.getElementById('setup-fb-url').value.trim();
-  if (!url || !url.startsWith('https://')) {
-    toast('Please enter a valid https:// URL', 'error'); return;
+  // All categories including custom
+  const allCats = [...PREP_CATS, ...Object.keys(grouped).filter(c => !PREP_CATS.includes(c))];
+
+  const html = allCats.map(cat => {
+    const catTasks = (grouped[cat] || []).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    if (!catTasks.length) return '';
+
+    const catDone = catTasks.filter(t => checks[t.id]?.done).length;
+    const catPct = catTasks.length ? Math.round(catDone / catTasks.length * 100) : 0;
+
+    const rows = catTasks.map(t => {
+      const c = checks[t.id] || {};
+      const isDone = !!c.done;
+      const isEditable = isToday;
+      return `
+        <div class="task-row${isDone ? ' done' : ''}">
+          <input type="checkbox" ${isDone ? 'checked' : ''} ${isEditable ? '' : 'disabled'}
+            onchange="kitchenToggleTask('${t.id}')">
+          <span class="task-name${isDone ? ' done' : ''}">${t.name}</span>
+          ${t.targetQty ? `<span class="task-target">${t.targetQty}</span>` : '<span class="task-target"></span>'}
+          <input type="text" class="task-actual"
+            value="${c.actualQty || ''}"
+            placeholder="actual"
+            ${(isDone && isEditable) ? '' : 'disabled'}
+            onchange="kitchenSetActualQty('${t.id}', this.value)">
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="cat-head">
+        <span class="cat-name">${cat}</span>
+        <div class="pbar"><div class="pfill" style="width:${catPct}%;background:${catPct===100?'var(--accent2)':'var(--accent)'}"></div></div>
+        <span class="cat-count">${catDone}/${catTasks.length}</span>
+      </div>
+      ${rows}`;
+  }).join('');
+
+  document.getElementById('prep-content').innerHTML = html || '<div class="empty">No prep tasks set up yet.</div>';
+
+  // Production
+  const batches = (db.productionBatches || []).filter(b => b.date === viewDate);
+  document.getElementById('prod-count').textContent = batches.length ? `${batches.length} logged` : '';
+
+  if (!batches.length) {
+    document.getElementById('prod-content').innerHTML = '<div class="empty">No production batches logged for this date.</div>';
+  } else {
+    document.getElementById('prod-content').innerHTML = batches.map(b => {
+      const recipe = (db.recipes || []).find(r => r.id === b.recipeId);
+      const recipeName = recipe?.name || 'Unknown recipe';
+      const batchCount = b.batchesLogged ?? 1;
+      const portions = b.portionsProduced ?? 0;
+      return `
+        <div class="prod-card">
+          <div class="prod-recipe">${recipeName}</div>
+          <div class="prod-meta">${batchCount} batch${batchCount !== 1 ? 'es' : ''} &nbsp;·&nbsp; ${portions} portion${portions !== 1 ? 's' : ''} produced</div>
+          ${b.note ? `<div class="prod-note">📝 ${b.note}</div>` : ''}
+        </div>`;
+    }).join('');
   }
-  localStorage.setItem('rcc-st-fb-url', url);
-  fbUrl = url;
-  loadData();
 }
 
-function clearSetup() {
-  fbUrl = DEFAULT_FB_URL;
-  localStorage.setItem('rcc-st-fb-url', DEFAULT_FB_URL);
-  document.getElementById('setup-fb-url').value = DEFAULT_FB_URL;
-  loadData();
+// ── PREP INTERACTION (today only) ────────────────────────────────────────
+function kitchenToggleTask(taskId) {
+  if (viewDate !== todayStr()) return;
+  if (!db.prepDailyHistory) db.prepDailyHistory = {};
+  const day = db.prepDailyHistory[viewDate] || { checks: {} };
+  const c = day.checks[taskId] || {};
+  day.checks[taskId] = { ...c, done: !c.done };
+  db.prepDailyHistory[viewDate] = day;
+  saveDB();
+  renderPrepProd();
 }
 
-// ── LOAD DATA ─────────────────────────────────────────────────────────────
-async function loadData() {
-  showScreen('loading');
-  try {
-    const [ingData, recData] = await Promise.all([
-      fbGet('/rcc/ingredients'),
-      fbGet('/rcc/batchRecipes').catch(() => null)
-    ]);
-
-    if (!ingData || !Array.isArray(ingData) || ingData.length === 0) {
-      toast('No ingredients found. Ask the manager to sync from the desktop app.', 'error');
-      showScreen('setup'); return;
-    }
-
-    ingredients  = ingData;
-    batchRecipes = Array.isArray(recData) ? recData : [];
-
-    initCountLines();
-    renderCountScreen();
-    renderProductionRecipeList();
-
-    showScreen(currentTab === 'production' ? 'production' : 'count');
-    document.getElementById('tab-bar').style.display = 'flex';
-    updateTabUI();
-    document.getElementById('header-info').textContent =
-      ingredients.length + ' ingredients' +
-      (batchRecipes.length ? ', ' + batchRecipes.length + ' recipes' : '');
-  } catch (e) {
-    toast('Could not connect: ' + e.message, 'error');
-    showScreen('setup');
-  }
+function kitchenSetActualQty(taskId, val) {
+  if (viewDate !== todayStr()) return;
+  if (!db.prepDailyHistory) db.prepDailyHistory = {};
+  const day = db.prepDailyHistory[viewDate] || { checks: {} };
+  day.checks[taskId] = { ...(day.checks[taskId] || {}), actualQty: val };
+  db.prepDailyHistory[viewDate] = day;
+  saveDB();
 }
 
-async function reloadData() {
-  if (!fbUrl) { showScreen('setup'); return; }
-  await loadData();
-}
+// ── STOCK RENDER ─────────────────────────────────────────────────────────
+function renderStock() {
+  const ingredients = (db.ingredients || []).filter(i => !i.obsolete);
 
-// ── COUNT LOGIC ───────────────────────────────────────────────────────────
-function initCountLines() {
-  countLines = {};
-  ingredients.forEach(i => {
-    countLines[i.id] = { qty: '', unit: i.defaultUnit || i.recipeUnit };
-  });
-}
-
-const UNITS = ['g', 'kg', 'ml', 'L', 'each', 'carton', 'case', 'bag', 'box', 'dozen', 'lb'];
-
-function unitSel(id, val) {
-  return `<select id="${id}" onchange="saveLine('${id}')">${
-    UNITS.map(u => `<option${u === val ? ' selected' : ''}>${u}</option>`).join('')
-  }</select>`;
-}
-
-function renderIngRow(i) {
-  const cl   = countLines[i.id] || {};
-  const unit = cl.unit || i.defaultUnit || i.recipeUnit;
-  return `
-    <div class="ing-row" id="row-${i.id}">
-      <div>
-        <div class="ing-name">${i.name}</div>
-        <div class="ing-unit">${i.recipeUnit}</div>
-      </div>
-      <div>
-        <label>Count Qty</label>
-        <input type="number" step="0.01" min="0" id="qty-${i.id}"
-          placeholder="0" value="${cl.qty || ''}"
-          onchange="saveLine('qty-${i.id}')">
-      </div>
-      <div>
-        <label>Unit</label>
-        ${unitSel('unit-' + i.id, unit)}
-      </div>
-    </div>`;
-}
-
-function saveLine(elId) {
-  const dash  = elId.indexOf('-');
-  const field = elId.slice(0, dash);
-  const ingId = elId.slice(dash + 1);
-  const el = document.getElementById(elId);
-  if (!el || !countLines[ingId]) return;
-  countLines[ingId][field] = field === 'qty' ? (parseFloat(el.value) || 0) : el.value;
-  const row = document.getElementById('row-' + ingId);
-  if (row) row.style.background = (countLines[ingId].qty > 0) ? 'rgba(78,204,163,.04)' : '';
-}
-
-function renderCountScreen() {
-  const fromEl = document.getElementById('cnt-from');
-  const toEl   = document.getElementById('cnt-to');
-  if (!fromEl.value) fromEl.value = sevenDaysAgo();
-  if (!toEl.value)   toEl.value   = todayStr();
-
-  const groups = {};
+  // Group by category
+  const grouped = {};
   ingredients.forEach(i => {
     const cat = i.category || 'Uncategorised';
-    if (!groups[cat]) groups[cat] = [];
-    groups[cat].push(i);
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(i);
   });
 
-  document.getElementById('ing-list').innerHTML = Object.entries(groups).map(([cat, ings]) => `
-    <div class="card" style="padding:12px 18px">
-      <div class="category-hdr">${cat} (${ings.length})</div>
-      ${ings.map(i => renderIngRow(i)).join('')}
-    </div>
-  `).join('');
+  const cats = Object.keys(grouped).sort();
+  const html = cats.map(cat => {
+    const items = grouped[cat].sort((a, b) => a.name.localeCompare(b.name));
+    const rows = items.map(i => {
+      const qty = parseFloat(i.totalBaseUnits || 0);
+      return `
+        <div class="stock-row${qty <= 0 ? ' zero' : ''}">
+          <span class="stock-name">${i.name}</span>
+          <span class="stock-qty">${qty % 1 === 0 ? qty : qty.toFixed(2)}</span>
+          <span class="stock-unit">${i.recipeUnit || ''}</span>
+        </div>`;
+    }).join('');
+    return `<div class="stock-cat-head">${cat}</div>${rows}`;
+  }).join('');
+
+  document.getElementById('stock-content').innerHTML = html || '<div class="empty">No ingredients added yet.</div>';
 }
-
-async function submitCount() {
-  const from = document.getElementById('cnt-from').value;
-  const to   = document.getElementById('cnt-to').value;
-  if (!from || !to) { toast('Please enter a date range.', 'error'); return; }
-  if (from > to)    { toast('Period Start must be before Period End.', 'error'); return; }
-
-  const lines = ingredients
-    .map(i => {
-      const cl = countLines[i.id] || {};
-      return { ingredientId: i.id, closeQty: parseFloat(cl.qty) || 0, closeUnit: cl.unit || i.defaultUnit || i.recipeUnit };
-    })
-    .filter(l => l.closeQty > 0);
-
-  if (!lines.length) { toast('Please enter at least one count quantity.', 'error'); return; }
-
-  const id    = uid();
-  const count = {
-    id, dateFrom: from, dateTo: to,
-    note: document.getElementById('cnt-note').value.trim(),
-    submittedAt: new Date().toISOString(),
-    lines
-  };
-
-  const btn = document.querySelector('.submit-bar .btn-success');
-  btn.disabled = true; btn.textContent = 'Submitting…';
-
-  try {
-    await fbPut('/rcc/pendingCounts/' + id, count);
-    lastSubmittedMode = 'count';
-    document.getElementById('success-title').textContent   = 'Count Submitted!';
-    document.getElementById('success-summary').innerHTML = `
-      <strong>Period:</strong> ${from} → ${to}<br>
-      <strong>Items counted:</strong> ${lines.length} ingredient${lines.length !== 1 ? 's' : ''}<br>
-      ${count.note ? `<strong>Note:</strong> ${count.note}<br>` : ''}
-      <strong>Submitted:</strong> ${new Date().toLocaleTimeString()}
-    `;
-    document.getElementById('success-new-btn').textContent = '+ Start Another Count';
-    document.getElementById('success-new-btn').onclick     = startNewCount;
-    document.getElementById('success-switch-btn').textContent = 'Switch to Production';
-    document.getElementById('tab-bar').style.display = 'none';
-    showScreen('success');
-  } catch (e) {
-    toast('Submit failed: ' + e.message, 'error');
-  } finally {
-    btn.disabled = false; btn.textContent = '✓ Submit Count';
-  }
-}
-
-function startNewCount() {
-  initCountLines();
-  document.getElementById('cnt-from').value = sevenDaysAgo();
-  document.getElementById('cnt-to').value   = todayStr();
-  document.getElementById('cnt-note').value = '';
-  renderCountScreen();
-  currentTab = 'count';
-  document.getElementById('tab-bar').style.display = 'flex';
-  updateTabUI();
-  showScreen('count');
-}
-
-// ── PRODUCTION LOGIC ──────────────────────────────────────────────────────
-function renderProductionRecipeList() {
-  const sel = document.getElementById('prod-recipe');
-  if (!batchRecipes.length) {
-    sel.innerHTML = '<option value="">No batch recipes — ask manager to sync</option>';
-    return;
-  }
-  sel.innerHTML = '<option value="">— Select batch recipe —</option>' +
-    batchRecipes.map(r =>
-      `<option value="${r.id}">${r.name}${r.batchYield > 1 ? ' (' + r.batchYield + ' portions/batch)' : ''}</option>`
-    ).join('');
-  updateProdPreview();
-}
-
-function updateProdPreview() {
-  const recipeId = document.getElementById('prod-recipe').value;
-  const batches  = parseInt(document.getElementById('prod-batches').value) || 0;
-  const el       = document.getElementById('prod-preview');
-  if (!recipeId || !batches) { el.innerHTML = ''; return; }
-
-  const rec = batchRecipes.find(r => r.id === recipeId);
-  if (!rec) { el.innerHTML = ''; return; }
-
-  const batchYield    = rec.batchYield || 1;
-  const totalPortions = batches * batchYield;
-  el.innerHTML = `<div class="preview-box">
-    ${batchYield > 1
-      ? `<strong>${batches}</strong> batch${batches !== 1 ? 'es' : ''} &times; <strong>${batchYield}</strong> portions/batch<br>
-         = <strong style="color:var(--accent2);font-size:1.2rem">${totalPortions} portions</strong>`
-      : `<strong style="color:var(--accent2);font-size:1.2rem">${totalPortions}</strong> portion${totalPortions !== 1 ? 's' : ''} produced`
-    }
-  </div>`;
-}
-
-async function submitProduction() {
-  const recipeId = document.getElementById('prod-recipe').value;
-  const batches  = parseInt(document.getElementById('prod-batches').value) || 0;
-  const date     = document.getElementById('prod-date').value;
-  const note     = document.getElementById('prod-note').value.trim();
-
-  if (!recipeId)                { toast('Select a recipe.', 'error'); return; }
-  if (!batches || batches <= 0) { toast('Batches made must be > 0.', 'error'); return; }
-  if (!date)                    { toast('Date required.', 'error'); return; }
-
-  const rec           = batchRecipes.find(r => r.id === recipeId);
-  const batchYield    = rec ? (rec.batchYield || 1) : 1;
-  const totalPortions = batches * batchYield;
-
-  const id   = uid();
-  const prod = {
-    id, date, recipeId,
-    batchesLogged: batches,
-    portionsProduced: totalPortions,
-    note,
-    submittedAt: new Date().toISOString()
-  };
-
-  const btn = document.querySelector('#screen-production .btn-success');
-  btn.disabled = true; btn.textContent = 'Submitting…';
-
-  try {
-    await fbPut('/rcc/pendingProductions/' + id, prod);
-    lastSubmittedMode = 'production';
-    document.getElementById('success-title').textContent = 'Production Logged!';
-    document.getElementById('success-summary').innerHTML = `
-      <strong>Recipe:</strong> ${rec ? rec.name : recipeId}<br>
-      <strong>Batches:</strong> ${batches}${batchYield > 1 ? ` &times; ${batchYield} = ${totalPortions} portions` : ''}<br>
-      <strong>Date:</strong> ${date}<br>
-      ${note ? `<strong>Note:</strong> ${note}<br>` : ''}
-      <strong>Submitted:</strong> ${new Date().toLocaleTimeString()}
-    `;
-    document.getElementById('success-new-btn').textContent = '+ Log Another Batch';
-    document.getElementById('success-new-btn').onclick     = startNewProduction;
-    document.getElementById('success-switch-btn').textContent = 'Switch to Stock Count';
-    document.getElementById('tab-bar').style.display = 'none';
-    showScreen('success');
-  } catch (e) {
-    toast('Submit failed: ' + e.message, 'error');
-  } finally {
-    btn.disabled = false; btn.textContent = '✓ Submit Production Log';
-  }
-}
-
-function startNewProduction() {
-  document.getElementById('prod-recipe').value    = '';
-  document.getElementById('prod-batches').value   = '';
-  document.getElementById('prod-date').value      = todayStr();
-  document.getElementById('prod-note').value      = '';
-  document.getElementById('prod-preview').innerHTML = '';
-  currentTab = 'production';
-  document.getElementById('tab-bar').style.display = 'flex';
-  updateTabUI();
-  showScreen('production');
-}
-
-function switchToOtherMode() {
-  const tab = lastSubmittedMode === 'count' ? 'production' : 'count';
-  document.getElementById('tab-bar').style.display = 'flex';
-  switchTab(tab);
-}
-
-// ── TAB SWITCHING ─────────────────────────────────────────────────────────
-function switchTab(tab) {
-  currentTab = tab;
-  updateTabUI();
-  if (tab === 'count') {
-    document.getElementById('header-icon').textContent  = '📦';
-    document.getElementById('header-title').textContent = 'Stock Count';
-    showScreen('count');
-  } else {
-    document.getElementById('header-icon').textContent  = '🍳';
-    document.getElementById('header-title').textContent = 'Production Log';
-    if (!document.getElementById('prod-date').value) {
-      document.getElementById('prod-date').value = todayStr();
-    }
-    showScreen('production');
-  }
-}
-
-function updateTabUI() {
-  document.getElementById('tab-count-btn').classList.toggle('active', currentTab === 'count');
-  document.getElementById('tab-prod-btn').classList.toggle('active', currentTab === 'production');
-}
-
-// ── INIT ──────────────────────────────────────────────────────────────────
-(function init() {
-  const saved = localStorage.getItem('rcc-st-fb-url') || DEFAULT_FB_URL;
-  document.getElementById('setup-fb-url').value = saved;
-  fbUrl = saved;
-  localStorage.setItem('rcc-st-fb-url', saved);
-  if (saved) {
-    loadData();
-  } else {
-    showScreen('setup');
-  }
-})();
 </script>
 </body>
 </html>
