@@ -274,8 +274,8 @@
         <div><input type="text"   id="lp-note"    placeholder="Note (optional)"></div>
       </div>
       <div class="form-actions">
-        <button class="btn btn-ghost btn-sm" onclick="toggleLogForm()">Cancel</button>
-        <button class="btn btn-success btn-sm" onclick="submitProduction()">Submit</button>
+        <button class="btn btn-ghost btn-sm" id="lp-cancel-btn" onclick="toggleLogForm()">Cancel</button>
+        <button class="btn btn-success btn-sm" id="lp-submit-btn" onclick="submitProduction()">Submit</button>
       </div>
     </div>
 
@@ -856,18 +856,20 @@ function toggleLogForm() {
   const form = document.getElementById('log-prod-form');
   const showing = form.style.display !== 'none';
   form.style.display = showing ? 'none' : '';
-  if (!showing) {
-    document.getElementById('lp-recipe').value  = '';
-    document.getElementById('lp-batches').value = '1';
-    document.getElementById('lp-note').value    = '';
-  }
+  editingProdId = null;
+  document.getElementById('lp-recipe').value  = '';
+  document.getElementById('lp-batches').value = '1';
+  document.getElementById('lp-note').value    = '';
+  document.getElementById('lp-submit-btn').textContent = 'Submit';
+  document.getElementById('lp-cancel-btn').textContent  = 'Cancel';
 }
 
 async function loadAllProductions() {
   if (allProductions !== null) return;
   try {
     const data = await fbGet('/rcc/pendingProductions');
-    allProductions = data ? Object.values(data) : [];
+    // Preserve Firebase push-key (_fbKey) so we can edit/delete individual entries
+    allProductions = data ? Object.entries(data).map(([k, v]) => v ? {...v, _fbKey: k} : null).filter(Boolean) : [];
   } catch(e) { allProductions = []; }
 }
 
@@ -877,19 +879,68 @@ async function submitProduction() {
   const note     = document.getElementById('lp-note').value.trim();
   if (!recipeId) { toast('Select a recipe.', 'error'); return; }
   if (batches < 1) { toast('Enter at least 1 batch.', 'error'); return; }
-  const recipe  = batchRecipes.find(r => r.id === recipeId);
-  const payload = { id: uid(), date: todayStr(), recipeId, batchesLogged: batches, note };
+  const recipe = batchRecipes.find(r => r.id === recipeId);
+
+  if (editingProdId) {
+    // Edit existing batch
+    const existing = (allProductions||[]).find(x => x.id === editingProdId);
+    if (!existing) return;
+    const updated = { ...existing, recipeId, batchesLogged: batches, note };
+    const fbKey   = existing._fbKey || editingProdId;
+    try {
+      await fbPut('/rcc/pendingProductions/' + fbKey, updated);
+      const idx = allProductions.findIndex(x => x.id === editingProdId);
+      if (idx >= 0) allProductions[idx] = {...updated, _fbKey: fbKey};
+      toggleLogForm();
+      renderProduction();
+      toast(`Batch updated: ${recipe?.name||'recipe'}.`);
+    } catch(e) { toast('Update failed: ' + e.message, 'error'); }
+  } else {
+    // New batch — use PUT with own id as key so we can edit/delete later
+    const id      = uid();
+    const payload = { id, date: todayStr(), recipeId, batchesLogged: batches, note };
+    try {
+      await fbPut('/rcc/pendingProductions/' + id, payload);
+      allProductions = allProductions || [];
+      allProductions.push({...payload, _fbKey: id});
+      toggleLogForm();
+      renderProduction();
+      toast(`${batches} batch${batches!==1?'es':''} of ${recipe?.name||'recipe'} submitted.`);
+    } catch(e) { toast('Submit failed: ' + e.message, 'error'); }
+  }
+}
+
+let editingProdId = null;
+
+function startEditProduction(batchId) {
+  editingProdId = batchId;
+  const b      = (allProductions||[]).find(x => x.id === batchId);
+  const recipe = batchRecipes.find(r => r.id === b?.recipeId);
+  if (!b) return;
+  document.getElementById('lp-recipe').value  = b.recipeId;
+  document.getElementById('lp-batches').value = b.batchesLogged ?? 1;
+  document.getElementById('lp-note').value    = b.note || '';
+  document.getElementById('log-prod-form').style.display = '';
+  document.getElementById('lp-submit-btn').textContent = 'Update';
+  document.getElementById('lp-cancel-btn').textContent  = 'Cancel Edit';
+  toast(`Editing batch: ${recipe?.name || batchId}`);
+}
+
+async function deleteProduction(batchId) {
+  const b      = (allProductions||[]).find(x => x.id === batchId);
+  const recipe = batchRecipes.find(r => r.id === b?.recipeId);
+  if (!confirm(`Delete batch of "${recipe?.name || 'this recipe'}"?`)) return;
+  const fbKey = b?._fbKey || batchId;
   try {
-    await fbPost('/rcc/pendingProductions', payload);
-    allProductions = null;
-    toggleLogForm();
-    toast(`${batches} batch${batches!==1?'es':''} of ${recipe?.name||'recipe'} submitted.`);
-    await loadAllProductions();
+    await fetch(FB_URL + '/rcc/pendingProductions/' + fbKey + '.json', { method: 'DELETE' });
+    allProductions = (allProductions||[]).filter(x => x.id !== batchId);
     renderProduction();
-  } catch(e) { toast('Submit failed: ' + e.message, 'error'); }
+    toast('Batch deleted.');
+  } catch(e) { toast('Delete failed: ' + e.message, 'error'); }
 }
 
 function renderProduction() {
+  const isToday = prodDate === todayStr();
   const batches = (allProductions||[]).filter(b => b.date === prodDate);
   document.getElementById('prod-count').textContent = batches.length ? `${batches.length} logged` : '';
   document.getElementById('prod-content').innerHTML = !batches.length
@@ -897,12 +948,27 @@ function renderProduction() {
     : batches.map(b => {
         const recipe   = batchRecipes.find(r => r.id === b.recipeId);
         const n        = b.batchesLogged ?? 1;
-        const portions = recipe ? n * (recipe.batchYield||1) : '?';
+        const total    = recipe ? n * (recipe.batchYield||1) : '?';
+        const unit     = recipe?.outputUnit || 'portions';
+        const ings     = recipe?.ingredients || [];
         return `
           <div class="prod-card">
             <div class="prod-recipe">${recipe?.name||'Unknown recipe'}</div>
-            <div class="prod-meta">${n} batch${n!==1?'es':''} &nbsp;·&nbsp; ${portions} portion${portions!==1?'s':''}</div>
+            ${ings.length ? `
+              <div style="margin-top:6px;font-size:.78rem;color:var(--muted)">
+                <span style="text-transform:uppercase;letter-spacing:.04em;font-size:.7rem">Ingredients (1 batch)</span><br>
+                ${ings.map(i => `<span style="margin-right:10px">• ${i}</span>`).join('')}
+              </div>` : ''}
+            <div class="prod-meta" style="margin-top:8px">
+              ${n} batch${n!==1?'es':''} &nbsp;→&nbsp;
+              <strong style="color:var(--accent2)">${total} ${unit}</strong>
+            </div>
             ${b.note ? `<div class="prod-note">📝 ${b.note}</div>` : ''}
+            ${isToday ? `
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn btn-ghost btn-sm" onclick="startEditProduction('${b.id}')">✏ Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteProduction('${b.id}')">✕ Delete</button>
+            </div>` : ''}
           </div>`;
       }).join('');
 }
