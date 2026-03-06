@@ -622,7 +622,10 @@ function renderPrep() {
               <input type="checkbox" ${isDone ? 'checked' : ''} ${isToday ? '' : 'disabled'}
                 onclick="event.stopPropagation()"
                 onchange="onCheckbox('${t.id}', this.checked)">
-              <span class="task-name${isDone ? ' done' : ''}">${t.name}</span>
+              <div style="flex:1;min-width:0">
+                <span class="task-name${isDone ? ' done' : ''}">${t.name}</span>
+                ${t.instruction ? `<div style="font-size:.75rem;color:var(--muted);margin-top:2px;font-style:italic">${t.instruction}</div>` : ''}
+              </div>
               ${t.targetQty ? `<span class="task-target">${t.targetQty}</span>` : ''}
               ${badge}
             </div>
