@@ -46,6 +46,7 @@
     .btn-success { background: var(--accent2); color: #0f1117; }
     .btn-ghost   { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
     .btn-sm      { padding: 7px 13px; font-size: .82rem; }
+    .btn-warn    { background: var(--warn); color: #111; }
     .btn:active  { opacity: .8; }
     .btn:disabled { opacity: .4; pointer-events: none; }
 
@@ -348,7 +349,8 @@ let allCounts        = null;
 let allYieldLogs     = null;
 let prepChecksCache  = {};
 let countLines       = {};
-const expandedPanels = new Set();  // task IDs with open yield panel
+const expandedPanels     = new Set();  // task IDs with open yield panel (undone tasks)
+const expandedEditPanels = new Set();  // task IDs with open edit panel (done tasks)
 
 let prepDate = todayStr();
 let prodDate = todayStr();
@@ -417,7 +419,7 @@ function setStatus(ok) {
 
 async function refreshAll() {
   allProductions = null; allCounts = null; allYieldLogs = null;
-  prepChecksCache = {}; expandedPanels.clear();
+  prepChecksCache = {}; expandedPanels.clear(); expandedEditPanels.clear();
   await init();
 }
 
@@ -434,15 +436,6 @@ function showTab(tab) {
   if (tab === 'stock')      { renderStock(); loadStockHistory(); }
 }
 
-// ── SWIPE ─────────────────────────────────────────────────────────────────
-let touchStartX = 0;
-document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-document.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(dx) < 60) return;
-  if (currentTab === 'prep')       prepChangeDate(dx < 0 ? 1 : -1);
-  if (currentTab === 'production') prodChangeDate(dx < 0 ? 1 : -1);
-}, { passive: true });
 
 // ══════════════════════════════════════════════════════════════════════════
 // PREP TAB — with inline yield logging per task
@@ -453,7 +446,7 @@ function prepChangeDate(delta) {
   const next = localDateStr(d);
   if (next > todayStr()) return;
   prepDate = next;
-  expandedPanels.clear();
+  expandedPanels.clear(); expandedEditPanels.clear();
   setDateLabel('prep-date-label','prep-btn-prev','prep-btn-next', prepDate);
   loadPrepChecks(prepDate).then(() => renderPrep());
 }
@@ -475,7 +468,10 @@ async function loadAllYieldLogs() {
 }
 
 function getTaskYieldToday(taskId) {
-  return (allYieldLogs || []).find(l => l.taskId === taskId && l.date === todayStr());
+  const entries = (allYieldLogs || []).filter(l => l.taskId === taskId && l.date === todayStr());
+  if (!entries.length) return null;
+  // Return latest entry (id is timestamp-based, lexicographic sort is chronological)
+  return entries.sort((a, b) => (b.id||'').localeCompare(a.id||''))[0];
 }
 
 function renderPrep() {
@@ -507,24 +503,27 @@ function renderPrep() {
         <span class="cat-count">${catDone}/${tasks.length}</span>
       </div>
       ${tasks.map(t => {
-        const c         = checks[t.id] || {};
-        const isDone    = !!c.done;
-        const isOpen    = expandedPanels.has(t.id) && isToday && !isDone;
-        const yieldLog  = isToday ? getTaskYieldToday(t.id) : null;
+        const c            = checks[t.id] || {};
+        const isDone       = !!c.done;
+        const isOpen       = expandedPanels.has(t.id)     && isToday && !isDone;
+        const isEditOpen   = expandedEditPanels.has(t.id) && isToday &&  isDone;
+        const yieldLog     = isToday ? getTaskYieldToday(t.id) : null;
 
         // Right badge
         let badge = '';
-        if (isDone && yieldLog) {
+        if (isDone && yieldLog && isToday) {
           const iG  = toGrams(yieldLog.inputQty, yieldLog.inputUnit);
           const oG  = toGrams(yieldLog.outputQty, yieldLog.outputUnit);
           const yp  = iG > 0 ? (oG / iG * 100) : 0;
           const col = yp >= 80 ? 'var(--accent2)' : yp >= 60 ? 'var(--warn)' : 'var(--danger)';
-          badge = `<span style="font-size:.8rem;font-weight:700;color:${col}">${yp.toFixed(1)}%</span>`;
+          badge = `<span id="yb-${t.id}" style="font-size:.8rem;font-weight:700;color:${col}">${yp.toFixed(1)}% ${isEditOpen ? '▲' : '✏'}</span>`;
+        } else if (isDone && !yieldLog) {
+          badge = isDone ? '' : '';  // no yield badge
         } else if (!isDone && isToday) {
           badge = `<span id="yb-${t.id}" style="font-size:.72rem;color:var(--muted)">${isOpen ? '▲' : '▼ yield'}</span>`;
         }
 
-        // Inline yield panel — only rendered for today's incomplete tasks
+        // Inline yield panel — for today's incomplete tasks
         const panel = (!isDone && isToday) ? `
           <div class="yield-panel" id="yp-${t.id}" style="display:${isOpen ? 'block' : 'none'}">
             <div class="yp-weights">
@@ -556,10 +555,53 @@ function renderPrep() {
             </div>
           </div>` : '';
 
+        // Edit panel — for today's done tasks that have a yield log
+        const editPanel = (isDone && yieldLog && isToday) ? (() => {
+          const units = ['g','kg','lb','oz'];
+          const iOpts = units.map(u => `<option${u===yieldLog.inputUnit?' selected':''}>${u}</option>`).join('');
+          const oOpts = units.map(u => `<option${u===yieldLog.outputUnit?' selected':''}>${u}</option>`).join('');
+          const iG0   = toGrams(yieldLog.inputQty, yieldLog.inputUnit);
+          const oG0   = toGrams(yieldLog.outputQty, yieldLog.outputUnit);
+          const yp0   = iG0 > 0 ? (oG0 / iG0 * 100) : 0;
+          const w0    = iG0 - oG0;
+          const col0  = yp0 >= 80 ? 'var(--accent2)' : yp0 >= 60 ? 'var(--warn)' : 'var(--danger)';
+          return `
+          <div class="yield-panel" id="yep-${t.id}" style="display:${isEditOpen?'block':'none'};border-bottom-color:var(--warn)">
+            <div style="font-size:.75rem;color:var(--warn);font-weight:600;margin-bottom:10px">CORRECT YIELD — tap fields to update</div>
+            <div class="yp-weights">
+              <div class="yp-col">
+                <div class="yp-col-label">Input weight (before prep)</div>
+                <div class="yp-input-row">
+                  <input type="number" id="eyin-${t.id}" value="${yieldLog.inputQty}" min="0" step="0.001" inputmode="decimal" oninput="calcEditYield('${t.id}')">
+                  <select id="eyinu-${t.id}" onchange="calcEditYield('${t.id}')">${iOpts}</select>
+                </div>
+              </div>
+              <div class="yp-col">
+                <div class="yp-col-label">Output weight (after prep)</div>
+                <div class="yp-input-row">
+                  <input type="number" id="eyout-${t.id}" value="${yieldLog.outputQty}" min="0" step="0.001" inputmode="decimal" oninput="calcEditYield('${t.id}')">
+                  <select id="eyoutu-${t.id}" onchange="calcEditYield('${t.id}')">${oOpts}</select>
+                </div>
+              </div>
+            </div>
+            <div class="yp-preview" id="yeprev-${t.id}">
+              <span>Yield: <strong style="color:${col0};font-size:1.15rem">${yp0.toFixed(1)}%</strong></span>
+              <span style="color:var(--muted)">Waste: ${w0 >= 1000 ? (w0/1000).toFixed(2)+' kg' : w0.toFixed(0)+' g'}</span>
+            </div>
+            <div class="yp-actions">
+              <button class="btn btn-ghost btn-sm" onclick="toggleEditPanel('${t.id}')">Cancel</button>
+              <button class="btn btn-warn" style="padding:11px 22px;font-size:1rem;color:#111" onclick="updateYield('${t.id}')">Update Yield</button>
+            </div>
+          </div>`;
+        })() : '';
+
+        const isTappable = isToday && (!isDone || (isDone && !!yieldLog));
+        const onClickFn  = isDone && yieldLog ? `toggleEditPanel('${t.id}')` : (!isDone ? `togglePanel('${t.id}')` : '');
+
         return `
           <div style="border-bottom:1px solid var(--border)">
-            <div class="task-row${isDone ? ' done' : ''}${isToday && !isDone ? ' tappable' : ''}"
-              onclick="${isToday && !isDone ? `togglePanel('${t.id}')` : ''}">
+            <div class="task-row${isDone ? ' done' : ''}${isTappable ? ' tappable' : ''}"
+              onclick="${onClickFn}">
               <input type="checkbox" ${isDone ? 'checked' : ''} ${isToday ? '' : 'disabled'}
                 onclick="event.stopPropagation()"
                 onchange="onCheckbox('${t.id}', this.checked)">
@@ -567,7 +609,7 @@ function renderPrep() {
               ${t.targetQty ? `<span class="task-target">${t.targetQty}</span>` : ''}
               ${badge}
             </div>
-            ${panel}
+            ${panel}${editPanel}
           </div>`;
       }).join('')}`;
   }).join('') || '<div class="empty">No prep tasks synced yet.<br>Main app → ⚙ Settings → Sync Prep Tasks</div>';
@@ -666,6 +708,88 @@ async function saveAndDone(taskId) {
     toast(`${taskName}: ${yPct}% yield saved.`);
   } catch(e) {
     toast('Submit failed: ' + e.message, 'error');
+  }
+}
+
+// Toggle edit panel (done tasks with yield)
+function toggleEditPanel(taskId) {
+  if (expandedEditPanels.has(taskId)) {
+    expandedEditPanels.delete(taskId);
+  } else {
+    expandedEditPanels.add(taskId);
+  }
+  const isOpen = expandedEditPanels.has(taskId);
+  const panel  = document.getElementById('yep-' + taskId);
+  const badge  = document.getElementById('yb-' + taskId);
+  if (panel) panel.style.display = isOpen ? 'block' : 'none';
+  if (badge) {
+    // Update the ✏/▲ icon at the end of the badge text
+    badge.textContent = badge.textContent.replace(/[✏▲]$/, isOpen ? '▲' : '✏');
+  }
+}
+
+// Live yield calc for the edit panel
+function calcEditYield(taskId) {
+  const iQty  = parseFloat(document.getElementById('eyin-'   + taskId)?.value) || 0;
+  const iUnit = document.getElementById('eyinu-'  + taskId)?.value || 'kg';
+  const oQty  = parseFloat(document.getElementById('eyout-'  + taskId)?.value) || 0;
+  const oUnit = document.getElementById('eyoutu-' + taskId)?.value || 'kg';
+  const el    = document.getElementById('yeprev-' + taskId);
+  if (!el) return;
+
+  if (!iQty || !oQty) {
+    el.innerHTML = '<span style="color:var(--muted);font-size:.82rem">Enter weights above to see yield</span>';
+    return;
+  }
+
+  const iG     = toGrams(iQty, iUnit);
+  const oG     = toGrams(oQty, oUnit);
+  const yPct   = iG > 0 ? (oG / iG * 100) : 0;
+  const wasteG = iG - oG;
+  const col    = yPct >= 80 ? 'var(--accent2)' : yPct >= 60 ? 'var(--warn)' : 'var(--danger)';
+
+  el.innerHTML = `
+    <span>Yield: <strong style="color:${col};font-size:1.15rem">${yPct.toFixed(1)}%</strong></span>
+    <span style="color:var(--muted)">Waste: ${wasteG >= 1000 ? (wasteG/1000).toFixed(2)+' kg' : wasteG.toFixed(0)+' g'}</span>`;
+}
+
+// Submit corrected yield entry (latest entry wins pattern)
+async function updateYield(taskId) {
+  const task  = prepTasks.find(t => t.id === taskId);
+  const iQty  = parseFloat(document.getElementById('eyin-'   + taskId)?.value);
+  const iUnit = document.getElementById('eyinu-'  + taskId)?.value || 'kg';
+  const oQty  = parseFloat(document.getElementById('eyout-'  + taskId)?.value);
+  const oUnit = document.getElementById('eyoutu-' + taskId)?.value || 'kg';
+
+  if (!iQty || iQty <= 0) { toast('Enter input weight.', 'error'); return; }
+  if (!oQty || oQty <= 0) { toast('Enter output weight.', 'error'); return; }
+
+  const iG = toGrams(iQty, iUnit);
+  const oG = toGrams(oQty, oUnit);
+  if (oG > iG + 0.001) { toast('Output cannot be heavier than input.', 'error'); return; }
+
+  const taskName = task?.name || '';
+  const ing      = ingredients.find(i => i.name.toLowerCase() === taskName.toLowerCase());
+  const yPct     = (oG / iG * 100).toFixed(1);
+
+  const payload = {
+    id: uid(), date: todayStr(), taskId,
+    ingredientId:   ing?.id   || null,
+    ingredientName: ing?.name || taskName,
+    inputQty: iQty, inputUnit: iUnit,
+    outputQty: oQty, outputUnit: oUnit,
+    note: 'corrected'
+  };
+
+  try {
+    await fbPost('/rcc/pendingYieldLogs', payload);
+    allYieldLogs = null;
+    await loadAllYieldLogs();
+    expandedEditPanels.delete(taskId);
+    renderPrep();
+    toast(`${taskName}: yield corrected to ${yPct}%.`);
+  } catch(e) {
+    toast('Update failed: ' + e.message, 'error');
   }
 }
 
