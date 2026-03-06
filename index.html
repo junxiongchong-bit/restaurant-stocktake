@@ -23,46 +23,33 @@
     header nav { display: flex; gap: 4px; margin-left: auto; }
     header nav button {
       background: none; border: none; color: var(--muted); cursor: pointer;
-      font-size: .85rem; font-weight: 600; padding: 8px 12px; border-radius: 6px; transition: .15s;
+      font-size: .85rem; font-weight: 600; padding: 8px 14px; border-radius: 6px; transition: .15s;
     }
     header nav button.active { background: var(--accent); color: #fff; }
-    #setup-btn {
-      background: none; border: 1px solid var(--border); color: var(--muted);
-      cursor: pointer; font-size: .8rem; padding: 6px 10px; border-radius: 6px;
-    }
 
     main { padding-top: 56px; }
-    .screen { display: none; }
-    .screen.active { display: block; }
-
-    /* ── SETUP SCREEN ── */
-    #screen-setup { max-width: 500px; margin: 60px auto; padding: 24px; }
-    #screen-setup h2 { font-size: 1.2rem; margin-bottom: 8px; }
-    #screen-setup p { color: var(--muted); font-size: .88rem; margin-bottom: 20px; line-height: 1.5; }
-    #screen-setup input {
-      width: 100%; padding: 10px 12px; background: var(--surface2);
-      border: 1px solid var(--border); border-radius: 8px; color: var(--text);
-      font-size: .9rem; margin-bottom: 12px;
-    }
-    #screen-setup input:focus { outline: none; border-color: var(--accent2); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 
     /* ── LOADING ── */
-    #screen-loading { text-align: center; padding: 80px 20px; color: var(--muted); }
+    #screen-loading {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; height: calc(100vh - 56px); color: var(--muted);
+    }
     .spinner {
-      width: 32px; height: 32px; border: 3px solid var(--border);
+      width: 36px; height: 36px; border: 3px solid var(--border);
       border-top-color: var(--accent2); border-radius: 50%;
-      animation: spin .7s linear infinite; margin: 0 auto 16px;
+      animation: spin .7s linear infinite; margin-bottom: 16px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ── BUTTONS ── */
     .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: .95rem; font-weight: 600; transition: .15s; }
-    .btn-primary  { background: var(--accent); color: #fff; }
-    .btn-success  { background: var(--accent2); color: #0f1117; }
-    .btn-ghost    { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-    .btn-danger   { background: var(--danger); color: #fff; }
-    .btn-sm       { padding: 7px 13px; font-size: .82rem; }
-    .btn:active   { opacity: .8; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-success { background: var(--accent2); color: #0f1117; }
+    .btn-ghost   { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-sm      { padding: 7px 13px; font-size: .82rem; }
+    .btn:active  { opacity: .8; }
     .btn:disabled { opacity: .4; pointer-events: none; }
 
     /* ── DATE NAV ── */
@@ -77,7 +64,7 @@
     }
     .date-nav .nav-btn:active { color: var(--accent2); }
     .date-nav .nav-btn.disabled { opacity: .2; pointer-events: none; }
-    #date-label { font-size: 1rem; font-weight: 700; min-width: 220px; text-align: center; user-select: none; }
+    .date-label { font-size: 1rem; font-weight: 700; min-width: 220px; text-align: center; user-select: none; }
     .today-badge {
       font-size: .68rem; color: var(--accent2); margin-left: 8px;
       background: rgba(78,204,163,.15); padding: 2px 7px; border-radius: 10px; vertical-align: middle;
@@ -89,14 +76,14 @@
       padding: 9px 16px; background: var(--surface2);
       border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
     }
-    .section-head .s-label { font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
-    .section-head .s-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .s-label { font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+    .s-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 
     /* ── PROGRESS BAR ── */
-    .pbar { height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; flex: 1; }
+    .pbar  { height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; flex: 1; }
     .pfill { height: 100%; border-radius: 4px; transition: width .3s; }
-    #overall-progress { display: flex; align-items: center; gap: 12px; padding: 10px 16px; }
-    #overall-progress .prog-label { font-size: .82rem; color: var(--muted); white-space: nowrap; }
+    #prep-overall { display: flex; align-items: center; gap: 12px; padding: 10px 16px; }
+    .prog-label { font-size: .82rem; color: var(--muted); white-space: nowrap; }
 
     /* ── CATEGORY HEADER ── */
     .cat-head {
@@ -104,7 +91,7 @@
       padding: 8px 16px; background: rgba(35,38,54,.9);
       border-bottom: 1px solid var(--border);
     }
-    .cat-name { font-size: .8rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    .cat-name  { font-size: .8rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
     .cat-count { font-size: .75rem; color: var(--muted); margin-left: auto; white-space: nowrap; }
 
     /* ── TASK ROW ── */
@@ -131,8 +118,8 @@
       background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
     }
     .prod-recipe { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
-    .prod-meta { font-size: .84rem; color: var(--muted); }
-    .prod-note { font-size: .82rem; color: var(--warn); margin-top: 6px; }
+    .prod-meta   { font-size: .84rem; color: var(--muted); }
+    .prod-note   { font-size: .82rem; color: var(--warn); margin-top: 6px; }
 
     /* ── LOG PRODUCTION FORM ── */
     #log-prod-form {
@@ -140,12 +127,12 @@
       background: var(--surface); border: 1px solid var(--accent); border-radius: 10px;
     }
     #log-prod-form h4 { font-size: .9rem; margin-bottom: 12px; color: var(--accent2); }
-    #log-prod-form select, #log-prod-form input, #log-prod-form textarea {
+    #log-prod-form select, #log-prod-form input {
       width: 100%; padding: 10px 12px; background: var(--surface2);
       border: 1px solid var(--border); border-radius: 8px; color: var(--text);
       font-size: .9rem; margin-bottom: 10px;
     }
-    #log-prod-form select:focus, #log-prod-form input:focus, #log-prod-form textarea:focus { outline: none; border-color: var(--accent2); }
+    #log-prod-form select:focus, #log-prod-form input:focus { outline: none; border-color: var(--accent2); }
     .form-row { display: flex; gap: 10px; }
     .form-row > * { flex: 1; }
     .form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
@@ -160,14 +147,14 @@
       display: flex; align-items: center; gap: 12px;
       padding: 8px 16px; border-bottom: 1px solid var(--border); min-height: 52px;
     }
-    .stock-name { flex: 1; font-size: .95rem; }
+    .stock-name      { flex: 1; font-size: .95rem; }
     .stock-unit-label { font-size: .78rem; color: var(--muted); white-space: nowrap; width: 36px; }
     .stock-input {
       width: 90px; padding: 8px 10px; background: var(--surface2);
       border: 1px solid var(--border); border-radius: 8px; color: var(--text);
       font-size: .95rem; text-align: right; flex-shrink: 0;
     }
-    .stock-input:focus { outline: none; border-color: var(--accent2); }
+    .stock-input:focus  { outline: none; border-color: var(--accent2); }
     .stock-input.filled { border-color: var(--accent2); background: rgba(78,204,163,.08); }
     .stock-submit-bar {
       position: sticky; bottom: 0; background: var(--surface);
@@ -181,12 +168,10 @@
       margin: 8px 14px; padding: 14px 16px;
       background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
     }
-    .history-card .hc-date { font-size: .78rem; color: var(--muted); margin-bottom: 6px; }
-    .history-card .hc-title { font-size: .92rem; font-weight: 700; margin-bottom: 4px; }
-    .history-card .hc-lines { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+    .hc-date  { font-size: .78rem; color: var(--muted); margin-bottom: 6px; }
+    .hc-lines { font-size: .82rem; color: var(--muted); line-height: 1.6; }
 
-    /* ── EMPTY / STATUS ── */
-    .empty { text-align: center; color: var(--muted); padding: 36px 20px; font-size: .9rem; }
+    /* ── STATUS BAR ── */
     .status-bar {
       background: var(--surface2); border-bottom: 1px solid var(--border);
       padding: 6px 16px; font-size: .76rem; color: var(--muted);
@@ -195,7 +180,43 @@
     .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
     .dot.green { background: var(--accent2); }
     .dot.red   { background: var(--danger); }
-    .dot.yellow{ background: var(--warn); }
+
+    /* ── YIELD TAB ── */
+    .yield-form {
+      margin: 12px 14px; padding: 18px;
+      background: var(--surface); border: 1px solid var(--accent2); border-radius: 12px;
+    }
+    .yield-form h4 { font-size: 1rem; color: var(--accent2); margin-bottom: 16px; font-weight: 700; }
+    .yield-field { margin-bottom: 14px; }
+    .yield-field label { display: block; font-size: .78rem; color: var(--muted); margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+    .yield-form select, .yield-form input[type=number], .yield-form input[type=text] {
+      width: 100%; padding: 13px 14px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+      font-size: 1rem; margin: 0;
+    }
+    .yield-form select:focus, .yield-form input:focus { outline: none; border-color: var(--accent2); }
+    .weight-row { display: flex; gap: 8px; }
+    .weight-row input { flex: 1; }
+    .weight-row select { width: 80px; flex-shrink: 0; }
+    .yield-preview {
+      background: var(--surface2); border-radius: 8px; padding: 14px 16px;
+      margin-bottom: 14px; display: flex; gap: 24px; flex-wrap: wrap; align-items: center;
+      min-height: 52px;
+    }
+    .yield-preview .yp-item { font-size: .9rem; }
+    .yield-preview .yp-val  { font-size: 1.3rem; font-weight: 700; display: block; margin-top: 2px; }
+    .yield-submit-row { display: flex; gap: 10px; justify-content: flex-end; }
+    .yield-card {
+      margin: 8px 14px; padding: 14px 16px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    }
+    .yc-head   { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .yc-name   { font-size: 1rem; font-weight: 700; }
+    .yc-pct    { font-size: 1.1rem; font-weight: 700; margin-left: auto; }
+    .yc-detail { font-size: .82rem; color: var(--muted); }
+
+    /* ── EMPTY ── */
+    .empty { text-align: center; color: var(--muted); padding: 40px 20px; font-size: .9rem; line-height: 1.6; }
 
     /* ── TOAST ── */
     #toast {
@@ -204,7 +225,7 @@
       padding: 12px 20px; font-size: .88rem; z-index: 200;
       opacity: 0; transition: opacity .3s; pointer-events: none; white-space: nowrap;
     }
-    #toast.show { opacity: 1; }
+    #toast.show    { opacity: 1; }
     #toast.success { border-color: var(--accent2); color: var(--accent2); }
     #toast.error   { border-color: var(--danger);  color: var(--danger);  }
   </style>
@@ -213,186 +234,238 @@
 
 <header>
   <span class="logo">🍽 Kitchen</span>
-  <nav id="main-nav" style="display:none">
-    <button class="active" id="tab-btn-prep" onclick="showTab('prep')">Prep &amp; Prod</button>
-    <button id="tab-btn-stock" onclick="showTab('stock')">Stock Take</button>
+  <nav>
+    <button class="active" id="tab-btn-prep"       onclick="showTab('prep')">Prep</button>
+    <button               id="tab-btn-production"  onclick="showTab('production')">Production</button>
+    <button               id="tab-btn-yield"       onclick="showTab('yield')">Yield</button>
+    <button               id="tab-btn-stock"       onclick="showTab('stock')">Stock Take</button>
   </nav>
-  <button id="setup-btn" onclick="showSetup()">⚙ Setup</button>
 </header>
 
 <main>
-  <!-- SETUP -->
-  <div class="screen active" id="screen-setup">
-    <h2>Kitchen Setup</h2>
-    <p>Enter your Firebase Realtime Database URL below.<br>
-       You can find this in the main app under ⚙ Settings → Firebase Database URL.</p>
-    <input id="fb-url-input" type="url" placeholder="https://your-project-default-rtdb.firebaseio.com" autocomplete="off">
-    <button class="btn btn-success" style="width:100%" onclick="saveSetup()">Connect to Firebase</button>
-  </div>
 
   <!-- LOADING -->
-  <div class="screen" id="screen-loading">
+  <div id="screen-loading">
     <div class="spinner"></div>
     <div>Loading from Firebase…</div>
   </div>
 
-  <!-- PREP & PRODUCTION TAB -->
-  <div class="screen" id="screen-main">
-    <div class="tab-content active" id="tab-prep">
+  <!-- ══ TAB: PREP ══════════════════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-prep">
 
-      <div class="status-bar">
-        <div class="dot" id="fb-status-dot"></div>
-        <span id="fb-status-text">Connected</span>
-        <button class="btn btn-sm btn-ghost" style="margin-left:auto;padding:4px 10px;font-size:.72rem" onclick="refreshAll()">↺ Refresh</button>
+    <div class="status-bar">
+      <div class="dot" id="prep-status-dot"></div>
+      <span id="prep-status-text"></span>
+      <button class="btn btn-sm btn-ghost" style="margin-left:auto;padding:4px 10px;font-size:.72rem" onclick="refreshAll()">↺ Refresh</button>
+    </div>
+
+    <div class="date-nav">
+      <button class="nav-btn" id="prep-btn-prev" onclick="prepChangeDate(-1)">&#8249;</button>
+      <div class="date-label" id="prep-date-label"></div>
+      <button class="nav-btn disabled" id="prep-btn-next" onclick="prepChangeDate(1)">&#8250;</button>
+    </div>
+
+    <div id="prep-overall">
+      <div class="pbar" style="height:9px"><div class="pfill" id="prep-overall-pfill"></div></div>
+      <span class="prog-label" id="prep-overall-label"></span>
+    </div>
+
+    <div id="prep-content"></div>
+
+  </div>
+
+  <!-- ══ TAB: PRODUCTION ════════════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-production">
+
+    <div class="date-nav">
+      <button class="nav-btn" id="prod-btn-prev" onclick="prodChangeDate(-1)">&#8249;</button>
+      <div class="date-label" id="prod-date-label"></div>
+      <button class="nav-btn disabled" id="prod-btn-next" onclick="prodChangeDate(1)">&#8250;</button>
+    </div>
+
+    <div class="section-head">
+      <span class="s-label">Batches Logged</span>
+      <div class="s-right">
+        <span id="prod-count" style="font-size:.78rem;color:var(--muted)"></span>
+        <button class="btn btn-sm btn-primary" id="log-prod-btn" onclick="toggleLogForm()">+ Log Batch</button>
+      </div>
+    </div>
+
+    <div id="log-prod-form" style="display:none">
+      <h4>Log Production Batch</h4>
+      <select id="lp-recipe"><option value="">— Select recipe —</option></select>
+      <div class="form-row">
+        <div><input type="number" id="lp-batches" placeholder="# of batches" min="1" step="1" value="1"></div>
+        <div><input type="text"   id="lp-note"    placeholder="Note (optional)"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost btn-sm" onclick="toggleLogForm()">Cancel</button>
+        <button class="btn btn-success btn-sm" onclick="submitProduction()">Submit</button>
+      </div>
+    </div>
+
+    <div id="prod-content"></div>
+
+  </div>
+
+  <!-- ══ TAB: YIELD ════════════════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-yield">
+
+    <div class="status-bar">
+      <div class="dot green"></div>
+      <span>Log input &amp; output weight to track real yield</span>
+    </div>
+
+    <!-- Log form -->
+    <div class="yield-form">
+      <h4>Log Yield</h4>
+
+      <div class="yield-field">
+        <label>Ingredient</label>
+        <select id="yl-ingredient" onchange="updateYieldPreview()">
+          <option value="">— Select ingredient —</option>
+        </select>
       </div>
 
-      <div class="date-nav">
-        <button class="nav-btn" id="btn-prev" onclick="changeDate(-1)">&#8249;</button>
-        <div id="date-label"></div>
-        <button class="nav-btn disabled" id="btn-next" onclick="changeDate(1)">&#8250;</button>
-      </div>
-
-      <div id="overall-progress">
-        <div class="pbar" style="height:9px"><div class="pfill" id="overall-pfill"></div></div>
-        <span class="prog-label" id="overall-label"></span>
-      </div>
-
-      <div class="section-head">
-        <span class="s-label">Prep Tasks</span>
-      </div>
-      <div id="prep-content"></div>
-
-      <div class="section-head" style="margin-top:4px">
-        <span class="s-label">Production</span>
-        <div class="s-right">
-          <span id="prod-count" style="font-size:.78rem;color:var(--muted)"></span>
-          <button class="btn btn-sm btn-primary" id="log-prod-btn" onclick="toggleLogForm()" style="display:none">+ Log Batch</button>
+      <div class="yield-field">
+        <label>Input Weight (before prep)</label>
+        <div class="weight-row">
+          <input type="number" id="yl-input-qty" placeholder="0.000" min="0" step="0.001" inputmode="decimal" oninput="updateYieldPreview()">
+          <select id="yl-input-unit" onchange="updateYieldPreview()">
+            <option>g</option><option selected>kg</option><option>lb</option><option>oz</option>
+          </select>
         </div>
       </div>
-      <div id="log-prod-form" style="display:none">
-        <h4>Log Production Batch</h4>
-        <select id="lp-recipe"><option value="">— Select recipe —</option></select>
-        <div class="form-row">
-          <div>
-            <input type="number" id="lp-batches" placeholder="# of batches" min="1" step="1" value="1">
-          </div>
-          <div>
-            <input type="text" id="lp-note" placeholder="Note (optional)">
-          </div>
-        </div>
-        <div class="form-actions">
-          <button class="btn btn-ghost btn-sm" onclick="toggleLogForm()">Cancel</button>
-          <button class="btn btn-success btn-sm" onclick="submitProduction()">Submit</button>
+
+      <div class="yield-field">
+        <label>Output Weight (after prep)</label>
+        <div class="weight-row">
+          <input type="number" id="yl-output-qty" placeholder="0.000" min="0" step="0.001" inputmode="decimal" oninput="updateYieldPreview()">
+          <select id="yl-output-unit" onchange="updateYieldPreview()">
+            <option>g</option><option selected>kg</option><option>lb</option><option>oz</option>
+          </select>
         </div>
       </div>
-      <div id="prod-content"></div>
 
-    </div><!-- /tab-prep -->
-
-    <!-- STOCK TAKE TAB -->
-    <div class="tab-content" id="tab-stock">
-      <div class="status-bar">
-        <div class="dot green"></div>
-        <span id="stock-status-text">Tap each ingredient to enter count</span>
-        <button class="btn btn-sm btn-ghost" style="margin-left:auto;padding:4px 10px;font-size:.72rem" onclick="clearStockCount()">Clear</button>
-      </div>
-      <div id="stock-content"></div>
-      <div class="stock-submit-bar">
-        <span class="stock-submit-info" id="stock-submit-info">0 items counted</span>
-        <button class="btn btn-success" id="stock-submit-btn" onclick="submitStockCount()" disabled>Submit Count</button>
+      <!-- Live preview -->
+      <div class="yield-preview" id="yl-preview">
+        <span style="color:var(--muted);font-size:.88rem">Enter weights above to see yield</span>
       </div>
 
-      <div class="section-head" style="margin-top:4px">
-        <span class="s-label">Recent Submissions</span>
+      <div class="yield-field">
+        <label>Note (optional)</label>
+        <input type="text" id="yl-note" placeholder="e.g. Tuesday morning, fresh delivery">
       </div>
-      <div id="stock-history" style="padding-bottom:80px"></div>
-    </div><!-- /tab-stock -->
 
-  </div><!-- /screen-main -->
+      <div class="yield-submit-row">
+        <button class="btn btn-ghost btn-sm" onclick="resetYieldForm()">Clear</button>
+        <button class="btn btn-success" id="yl-submit-btn" onclick="submitYieldLog()" disabled>Submit</button>
+      </div>
+    </div>
+
+    <!-- Today's logs -->
+    <div class="section-head" style="margin-top:8px">
+      <span class="s-label">Today's Yield Logs</span>
+      <div class="s-right"><span id="yl-count" style="font-size:.78rem;color:var(--muted)"></span></div>
+    </div>
+    <div id="yield-history" style="padding-bottom:40px"></div>
+
+  </div>
+
+  <!-- ══ TAB: STOCK TAKE ════════════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-stock">
+
+    <div class="status-bar">
+      <div class="dot green"></div>
+      <span>Enter counts then tap Submit</span>
+      <button class="btn btn-sm btn-ghost" style="margin-left:auto;padding:4px 10px;font-size:.72rem" onclick="clearStockCount()">Clear</button>
+    </div>
+
+    <div id="stock-content"></div>
+
+    <div class="stock-submit-bar">
+      <span class="stock-submit-info" id="stock-submit-info">0 items counted</span>
+      <button class="btn btn-success" id="stock-submit-btn" onclick="submitStockCount()" disabled>Submit Count</button>
+    </div>
+
+    <div class="section-head" style="margin-top:4px">
+      <span class="s-label">Recent Submissions</span>
+    </div>
+    <div id="stock-history" style="padding-bottom:80px"></div>
+
+  </div>
+
 </main>
 
 <div id="toast"></div>
 
 <script>
-// ── UTILS ─────────────────────────────────────────────────────────────────
-const todayStr = () => new Date().toISOString().slice(0,10);
-const uid      = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+// ── CONFIG ────────────────────────────────────────────────────────────────
+const FB_URL = 'https://restaurant-cost-app-default-rtdb.asia-southeast1.firebasedatabase.app';
 
+// ── UTILS ─────────────────────────────────────────────────────────────────
+// Use LOCAL date (not UTC) — critical for UTC+10/+11 timezones
+const localDateStr = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const todayStr = () => localDateStr(new Date());
+const uid      = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 const PREP_CATS = ['Slice','Cook','Prep','Mix','Portion','Wash & Portion','Precook'];
 
 function toast(msg, type='success') {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'show ' + type;
-  clearTimeout(t._t);
-  t._t = setTimeout(() => t.className = '', 2800);
+  clearTimeout(t._t); t._t = setTimeout(() => t.className = '', 2800);
 }
 
 function fmtDate(str) {
   if (!str) return '';
-  const d = new Date(str + 'T00:00:00');
-  return d.toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  return new Date(str + 'T00:00:00').toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+}
+
+function setDateLabel(labelId, prevBtnId, nextBtnId, date) {
+  const isToday = date === todayStr();
+  document.getElementById(labelId).innerHTML =
+    fmtDate(date) + (isToday ? ' <span class="today-badge">TODAY</span>' : '');
+  document.getElementById(nextBtnId).classList.toggle('disabled', isToday);
+  document.getElementById(prevBtnId).classList.remove('disabled');
 }
 
 // ── STATE ─────────────────────────────────────────────────────────────────
-let fbUrl       = localStorage.getItem('rcc-kitchen-fb-url') || '';
-let viewDate    = todayStr();
-let currentTab  = 'prep';
+let prepTasks    = [];
+let batchRecipes = [];
+let ingredients  = [];
+let allProductions = null;
+let allCounts      = null;
+let prepChecksCache = {};
+let countLines      = {};
 
-let prepTasks     = [];
-let batchRecipes  = [];
-let ingredients   = [];
-let allProductions = null;   // loaded lazily, null = not yet fetched
-let allCounts      = null;   // loaded lazily
+let prepDate = todayStr();
+let prodDate = todayStr();
 
-let prepChecksCache = {};    // { 'YYYY-MM-DD': { taskId: { done, actualQty } } }
-let countLines      = {};    // { ingId: qty (string) }
-
-// ── FIREBASE HELPERS ──────────────────────────────────────────────────────
+// ── FIREBASE ──────────────────────────────────────────────────────────────
 async function fbGet(path) {
-  const r = await fetch(fbUrl.replace(/\/$/, '') + path + '.json');
+  const r = await fetch(FB_URL + path + '.json');
   if (!r.ok) throw new Error('HTTP ' + r.status);
   return r.json();
 }
 async function fbPut(path, data) {
-  const r = await fetch(fbUrl.replace(/\/$/, '') + path + '.json', {
+  const r = await fetch(FB_URL + path + '.json', {
     method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
   });
   if (!r.ok) throw new Error('HTTP ' + r.status);
   return r.json();
 }
 async function fbPost(path, data) {
-  const r = await fetch(fbUrl.replace(/\/$/, '') + path + '.json', {
+  const r = await fetch(FB_URL + path + '.json', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
   });
   if (!r.ok) throw new Error('HTTP ' + r.status);
   return r.json();
 }
 
-// ── SETUP ────────────────────────────────────────────────────────────────
-function showSetup() {
-  document.getElementById('screen-main').classList.remove('active');
-  document.getElementById('screen-loading').classList.remove('active');
-  document.getElementById('screen-setup').classList.add('active');
-  document.getElementById('main-nav').style.display = 'none';
-  document.getElementById('fb-url-input').value = fbUrl;
-}
-
-function saveSetup() {
-  const url = document.getElementById('fb-url-input').value.trim();
-  if (!url.startsWith('http')) { toast('Please enter a valid Firebase URL.', 'error'); return; }
-  fbUrl = url.replace(/\/$/, '');
-  localStorage.setItem('rcc-kitchen-fb-url', fbUrl);
-  init();
-}
-
 // ── INIT ─────────────────────────────────────────────────────────────────
 async function init() {
-  if (!fbUrl) { showSetup(); return; }
-
-  document.getElementById('screen-setup').classList.remove('active');
-  document.getElementById('screen-main').classList.remove('active');
-  document.getElementById('screen-loading').classList.add('active');
-
+  document.getElementById('screen-loading').style.display = '';
+  document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
   try {
     const [tasks, recipes, ings] = await Promise.all([
       fbGet('/rcc/prepTasks').catch(() => []),
@@ -403,30 +476,32 @@ async function init() {
     batchRecipes = Array.isArray(recipes) ? recipes : [];
     ingredients  = Array.isArray(ings)    ? ings    : [];
 
-    document.getElementById('screen-loading').classList.remove('active');
-    document.getElementById('screen-main').classList.add('active');
-    document.getElementById('main-nav').style.display = '';
-
-    setFbStatus(true);
-    renderDateLabel();
     await Promise.all([
-      loadPrepChecks(viewDate),
-      loadProductionsForDate(viewDate),
+      loadPrepChecks(prepDate),
+      loadAllProductions(),
     ]);
-    renderPrepProd();
+
+    document.getElementById('screen-loading').style.display = 'none';
+    document.querySelectorAll('.tab-content').forEach(el => el.style.display = '');
+    showTab('prep');
     populateLogForm();
+    setStatus(true);
   } catch(e) {
-    document.getElementById('screen-loading').classList.remove('active');
-    document.getElementById('screen-setup').classList.add('active');
-    toast('Failed to connect: ' + e.message, 'error');
+    document.getElementById('screen-loading').innerHTML =
+      `<div style="color:var(--danger);text-align:center;padding:40px 20px">
+        Firebase connection failed.<br><small style="color:var(--muted)">${e.message}</small><br><br>
+        <button class="btn btn-ghost btn-sm" onclick="init()">↺ Retry</button>
+      </div>`;
   }
 }
 
-function setFbStatus(ok) {
-  const dot = document.getElementById('fb-status-dot');
-  const txt = document.getElementById('fb-status-text');
-  dot.className = 'dot ' + (ok ? 'green' : 'red');
-  txt.textContent = ok ? 'Firebase connected' : 'Connection error';
+function setStatus(ok) {
+  ['prep'].forEach(id => {
+    const dot = document.getElementById(id + '-status-dot');
+    const txt = document.getElementById(id + '-status-text');
+    if (dot) { dot.className = 'dot ' + (ok ? 'green' : 'red'); }
+    if (txt) txt.textContent = ok ? 'Firebase connected' : 'Connection error';
+  });
 }
 
 async function refreshAll() {
@@ -435,141 +510,150 @@ async function refreshAll() {
 }
 
 // ── TAB SWITCHING ─────────────────────────────────────────────────────────
+let currentTab = 'prep';
 function showTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('#main-nav button').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('header nav button').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   document.getElementById('tab-btn-' + tab).classList.add('active');
-  if (tab === 'stock') { renderStock(); loadStockHistory(); }
-}
-
-// ── DATE NAVIGATION ───────────────────────────────────────────────────────
-function changeDate(delta) {
-  const d = new Date(viewDate + 'T00:00:00');
-  d.setDate(d.getDate() + delta);
-  const next = d.toISOString().slice(0,10);
-  if (next > todayStr()) return;
-  viewDate = next;
-  renderDateLabel();
-  loadPrepChecks(viewDate).then(() => renderPrepProd());
-}
-
-function renderDateLabel() {
-  const isToday = viewDate === todayStr();
-  document.getElementById('date-label').innerHTML =
-    fmtDate(viewDate) + (isToday ? ' <span class="today-badge">TODAY</span>' : '');
-  document.getElementById('btn-next').classList.toggle('disabled', isToday);
-  document.getElementById('btn-prev').classList.remove('disabled');
-  // Show log button only for today
-  const logBtn = document.getElementById('log-prod-btn');
-  if (logBtn) logBtn.style.display = isToday ? '' : 'none';
+  if (tab === 'prep')       { setDateLabel('prep-date-label','prep-btn-prev','prep-btn-next',prepDate); renderPrep(); }
+  if (tab === 'production') { setDateLabel('prod-date-label','prod-btn-prev','prod-btn-next',prodDate); renderProduction(); }
+  if (tab === 'yield')      { populateYieldIngredients(); loadYieldHistory(); }
+  if (tab === 'stock')      { renderStock(); loadStockHistory(); }
 }
 
 // ── SWIPE ─────────────────────────────────────────────────────────────────
 let touchStartX = 0;
 document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-document.addEventListener('touchend',   e => {
-  if (currentTab !== 'prep') return;
+document.addEventListener('touchend', e => {
   const dx = e.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(dx) > 60) dx < 0 ? changeDate(1) : changeDate(-1);
+  if (Math.abs(dx) < 60) return;
+  if (currentTab === 'prep')       prepChangeDate(dx < 0 ? 1 : -1);
+  if (currentTab === 'production') prodChangeDate(dx < 0 ? 1 : -1);
 }, { passive: true });
 
-// ── PREP CHECKS ───────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+// PREP TAB
+// ══════════════════════════════════════════════════════════════════════════
+function prepChangeDate(delta) {
+  const d = new Date(prepDate + 'T00:00:00');
+  d.setDate(d.getDate() + delta);
+  const next = localDateStr(d);
+  if (next > todayStr()) return;
+  prepDate = next;
+  setDateLabel('prep-date-label','prep-btn-prev','prep-btn-next', prepDate);
+  loadPrepChecks(prepDate).then(() => renderPrep());
+}
+
 async function loadPrepChecks(date) {
   if (prepChecksCache[date] !== undefined) return;
   try {
     const data = await fbGet('/rcc/prepDaily/' + date);
     prepChecksCache[date] = data?.checks || {};
-  } catch(e) {
-    prepChecksCache[date] = {};
-  }
+  } catch(e) { prepChecksCache[date] = {}; }
 }
 
-// ── PREP RENDER ───────────────────────────────────────────────────────────
-function renderPrepProd() {
-  const isToday = viewDate === todayStr();
-  const checks  = prepChecksCache[viewDate] || {};
-  const tasks   = prepTasks;
+function renderPrep() {
+  const isToday = prepDate === todayStr();
+  const checks  = prepChecksCache[prepDate] || {};
+  const total   = prepTasks.length;
+  const done    = prepTasks.filter(t => checks[t.id]?.done).length;
+  const pct     = total ? Math.round(done / total * 100) : 0;
 
-  const total = tasks.length;
-  const done  = tasks.filter(t => checks[t.id]?.done).length;
-  const pct   = total ? Math.round(done / total * 100) : 0;
-
-  document.getElementById('overall-pfill').style.cssText =
+  document.getElementById('prep-overall-pfill').style.cssText =
     `width:${pct}%;background:${pct===100?'var(--accent2)':'var(--accent)'}`;
-  document.getElementById('overall-label').textContent = `${done} / ${total} prep tasks done`;
+  document.getElementById('prep-overall-label').textContent = `${done} / ${total} done`;
 
-  // Group by category
   const grouped = {};
   PREP_CATS.forEach(c => grouped[c] = []);
-  tasks.forEach(t => { if (!grouped[t.category]) grouped[t.category] = []; grouped[t.category].push(t); });
+  prepTasks.forEach(t => { if (!grouped[t.category]) grouped[t.category] = []; grouped[t.category].push(t); });
   const allCats = [...PREP_CATS, ...Object.keys(grouped).filter(c => !PREP_CATS.includes(c))];
 
   document.getElementById('prep-content').innerHTML = allCats.map(cat => {
-    const catTasks = (grouped[cat] || []).sort((a,b) => (a.order??0)-(b.order??0));
-    if (!catTasks.length) return '';
-    const catDone = catTasks.filter(t => checks[t.id]?.done).length;
-    const catPct  = Math.round(catDone / catTasks.length * 100);
+    const tasks = (grouped[cat]||[]).sort((a,b)=>(a.order??0)-(b.order??0));
+    if (!tasks.length) return '';
+    const catDone = tasks.filter(t => checks[t.id]?.done).length;
+    const catPct  = Math.round(catDone / tasks.length * 100);
     return `
       <div class="cat-head">
         <span class="cat-name">${cat}</span>
         <div class="pbar"><div class="pfill" style="width:${catPct}%;background:${catPct===100?'var(--accent2)':'var(--accent)'}"></div></div>
-        <span class="cat-count">${catDone}/${catTasks.length}</span>
+        <span class="cat-count">${catDone}/${tasks.length}</span>
       </div>
-      ${catTasks.map(t => {
+      ${tasks.map(t => {
         const c = checks[t.id] || {};
         const isDone = !!c.done;
         return `
           <div class="task-row${isDone?' done':''}">
-            <input type="checkbox" ${isDone?'checked':''} ${isToday?'':'disabled'}
-              onchange="kitchenToggleTask('${t.id}')">
+            <input type="checkbox" ${isDone?'checked':''} ${isToday?'':'disabled'} onchange="toggleTask('${t.id}')">
             <span class="task-name${isDone?' done':''}">${t.name}</span>
             <span class="task-target">${t.targetQty||''}</span>
-            <input type="text" class="task-actual" value="${c.actualQty||''}"
-              placeholder="actual" ${(isDone&&isToday)?'':'disabled'}
-              onchange="kitchenSetActualQty('${t.id}',this.value)">
+            <input type="text" class="task-actual" value="${c.actualQty||''}" placeholder="actual"
+              ${(isDone&&isToday)?'':'disabled'} onchange="setActualQty('${t.id}',this.value)">
           </div>`;
       }).join('')}`;
-  }).join('') || '<div class="empty">No prep tasks synced yet.<br>Go to main app ⚙ Settings → ↑ Sync Prep Tasks</div>';
+  }).join('') || '<div class="empty">No prep tasks synced yet.<br>Main app → ⚙ Settings → ↑ Sync Prep Tasks</div>';
+}
 
+async function toggleTask(taskId) {
+  if (prepDate !== todayStr()) return;
+  const checks = { ...(prepChecksCache[prepDate]||{}) };
+  const c = checks[taskId] || {};
+  checks[taskId] = { ...c, done: !c.done };
+  prepChecksCache[prepDate] = checks;
+  renderPrep();
+  try { await fbPut('/rcc/prepDaily/' + prepDate, { checks }); }
+  catch(e) { toast('Save failed: ' + e.message, 'error'); setStatus(false); }
+}
+
+async function setActualQty(taskId, val) {
+  if (prepDate !== todayStr()) return;
+  const checks = { ...(prepChecksCache[prepDate]||{}) };
+  checks[taskId] = { ...(checks[taskId]||{}), actualQty: val };
+  prepChecksCache[prepDate] = checks;
+  try { await fbPut('/rcc/prepDaily/' + prepDate, { checks }); }
+  catch(e) { toast('Save failed: ' + e.message, 'error'); }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// PRODUCTION TAB
+// ══════════════════════════════════════════════════════════════════════════
+function prodChangeDate(delta) {
+  const d = new Date(prodDate + 'T00:00:00');
+  d.setDate(d.getDate() + delta);
+  const next = localDateStr(d);
+  if (next > todayStr()) return;
+  prodDate = next;
+  setDateLabel('prod-date-label','prod-btn-prev','prod-btn-next', prodDate);
+  // Show log button only for today
+  document.getElementById('log-prod-btn').style.display = prodDate === todayStr() ? '' : 'none';
   renderProduction();
 }
 
-async function kitchenToggleTask(taskId) {
-  if (viewDate !== todayStr()) return;
-  const checks = { ...(prepChecksCache[viewDate] || {}) };
-  const c = checks[taskId] || {};
-  checks[taskId] = { ...c, done: !c.done };
-  prepChecksCache[viewDate] = checks;
-  renderPrepProd();
-  try {
-    await fbPut('/rcc/prepDaily/' + viewDate, { checks });
-  } catch(e) { toast('Save failed: ' + e.message, 'error'); setFbStatus(false); }
-}
-
-async function kitchenSetActualQty(taskId, val) {
-  if (viewDate !== todayStr()) return;
-  const checks = { ...(prepChecksCache[viewDate] || {}) };
-  checks[taskId] = { ...(checks[taskId]||{}), actualQty: val };
-  prepChecksCache[viewDate] = checks;
-  try {
-    await fbPut('/rcc/prepDaily/' + viewDate, { checks });
-  } catch(e) { toast('Save failed: ' + e.message, 'error'); setFbStatus(false); }
-}
-
-// ── PRODUCTION ────────────────────────────────────────────────────────────
 function populateLogForm() {
   const sel = document.getElementById('lp-recipe');
   sel.innerHTML = '<option value="">— Select recipe —</option>' +
-    batchRecipes.map(r => `<option value="${r.id}">${r.name} (yield: ${r.batchYield})</option>`).join('');
+    batchRecipes.map(r => `<option value="${r.id}">${r.name} (yield: ${r.batchYield||1})</option>`).join('');
 }
 
 function toggleLogForm() {
   const form = document.getElementById('log-prod-form');
   const showing = form.style.display !== 'none';
   form.style.display = showing ? 'none' : '';
-  if (!showing) { document.getElementById('lp-recipe').value = ''; document.getElementById('lp-batches').value = '1'; document.getElementById('lp-note').value = ''; }
+  if (!showing) {
+    document.getElementById('lp-recipe').value = '';
+    document.getElementById('lp-batches').value = '1';
+    document.getElementById('lp-note').value = '';
+  }
+}
+
+async function loadAllProductions() {
+  if (allProductions !== null) return;
+  try {
+    const data = await fbGet('/rcc/pendingProductions');
+    allProductions = data ? Object.values(data) : [];
+  } catch(e) { allProductions = []; }
 }
 
 async function submitProduction() {
@@ -578,49 +662,39 @@ async function submitProduction() {
   const note     = document.getElementById('lp-note').value.trim();
   if (!recipeId) { toast('Select a recipe.', 'error'); return; }
   if (batches < 1) { toast('Enter at least 1 batch.', 'error'); return; }
-  const recipe = batchRecipes.find(r => r.id === recipeId);
+  const recipe  = batchRecipes.find(r => r.id === recipeId);
   const payload = { id: uid(), date: todayStr(), recipeId, batchesLogged: batches, note };
   try {
     await fbPost('/rcc/pendingProductions', payload);
-    allProductions = null; // invalidate cache
+    allProductions = null;
     toggleLogForm();
     toast(`${batches} batch${batches!==1?'es':''} of ${recipe?.name||'recipe'} submitted.`);
-    await loadProductionsForDate(viewDate);
+    await loadAllProductions();
     renderProduction();
-  } catch(e) { toast('Submit failed: ' + e.message, 'error'); setFbStatus(false); }
-}
-
-async function loadProductionsForDate(date) {
-  if (allProductions === null) {
-    try {
-      const data = await fbGet('/rcc/pendingProductions');
-      allProductions = data ? Object.values(data) : [];
-    } catch(e) { allProductions = []; setFbStatus(false); }
-  }
+  } catch(e) { toast('Submit failed: ' + e.message, 'error'); }
 }
 
 function renderProduction() {
-  const batches = (allProductions || []).filter(b => b.date === viewDate);
+  const batches = (allProductions||[]).filter(b => b.date === prodDate);
   document.getElementById('prod-count').textContent = batches.length ? `${batches.length} logged` : '';
   document.getElementById('prod-content').innerHTML = !batches.length
     ? '<div class="empty">No production batches for this date.</div>'
     : batches.map(b => {
-        const recipe = batchRecipes.find(r => r.id === b.recipeId);
-        const n = b.batchesLogged ?? 1;
-        const portions = recipe ? n * (recipe.batchYield || 1) : '?';
+        const recipe   = batchRecipes.find(r => r.id === b.recipeId);
+        const n        = b.batchesLogged ?? 1;
+        const portions = recipe ? n * (recipe.batchYield||1) : '?';
         return `
           <div class="prod-card">
-            <div class="prod-recipe">${recipe?.name || 'Unknown recipe'}</div>
+            <div class="prod-recipe">${recipe?.name||'Unknown recipe'}</div>
             <div class="prod-meta">${n} batch${n!==1?'es':''} &nbsp;·&nbsp; ${portions} portion${portions!==1?'s':''}</div>
             ${b.note ? `<div class="prod-note">📝 ${b.note}</div>` : ''}
           </div>`;
       }).join('');
 }
 
-// ── BOOT ──────────────────────────────────────────────────────────────────
-init();
-
-// ── STOCK TAKE ────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════
+// STOCK TAKE TAB
+// ══════════════════════════════════════════════════════════════════════════
 function renderStock() {
   const grouped = {};
   ingredients.forEach(i => {
@@ -638,27 +712,21 @@ function renderStock() {
           <span class="stock-unit-label">${i.recipeUnit||''}</span>
           <input type="number" class="stock-input${countLines[i.id]?' filled':''}"
             id="sc-${i.id}" value="${countLines[i.id]||''}"
-            placeholder="0" min="0" step="0.01"
-            oninput="updateCountLine('${i.id}',this.value)"
-            inputmode="decimal">
+            placeholder="0" min="0" step="0.01" inputmode="decimal"
+            oninput="updateCountLine('${i.id}',this.value)">
         </div>`).join('');
-  }).join('') || '<div class="empty">No ingredients synced yet.<br>Go to main app ⚙ Settings → ↑ Sync Ingredients</div>';
-  updateStockSubmitBtn();
+  }).join('') || '<div class="empty">No ingredients synced yet.<br>Main app → ⚙ Settings → ↑ Sync Ingredients</div>';
+  updateStockBtn();
 }
 
 function updateCountLine(ingId, val) {
   const el = document.getElementById('sc-' + ingId);
-  if (val && parseFloat(val) >= 0) {
-    countLines[ingId] = val;
-    el.classList.add('filled');
-  } else {
-    delete countLines[ingId];
-    el.classList.remove('filled');
-  }
-  updateStockSubmitBtn();
+  if (val !== '' && parseFloat(val) >= 0) { countLines[ingId] = val; el.classList.add('filled'); }
+  else { delete countLines[ingId]; el.classList.remove('filled'); }
+  updateStockBtn();
 }
 
-function updateStockSubmitBtn() {
+function updateStockBtn() {
   const n = Object.keys(countLines).length;
   document.getElementById('stock-submit-info').textContent = n ? `${n} item${n!==1?'s':''} counted` : '0 items counted';
   document.getElementById('stock-submit-btn').disabled = n === 0;
@@ -673,7 +741,7 @@ function clearStockCount() {
 async function submitStockCount() {
   const n = Object.keys(countLines).length;
   if (!n) return;
-  const date = todayStr();
+  const date  = todayStr();
   const lines = Object.entries(countLines).map(([ingId, qty]) => {
     const ing = ingredients.find(i => i.id === ingId) || {};
     return { ingredientId: ingId, name: ing.name||ingId, closeQty: parseFloat(qty)||0, closeUnit: ing.recipeUnit||'each', openQty: 0, openUnit: ing.recipeUnit||'each' };
@@ -681,34 +749,174 @@ async function submitStockCount() {
   const payload = { id: uid(), date, dateFrom: date, dateTo: date, note: 'Tablet stock count — ' + fmtDate(date), lines };
   try {
     await fbPost('/rcc/pendingCounts', payload);
-    allCounts = null; // invalidate cache
+    allCounts = null;
     countLines = {};
     renderStock();
     toast(`Stock count submitted (${n} items).`);
     loadStockHistory();
-  } catch(e) { toast('Submit failed: ' + e.message, 'error'); setFbStatus(false); }
+  } catch(e) { toast('Submit failed: ' + e.message, 'error'); }
 }
 
 async function loadStockHistory() {
   if (allCounts === null) {
-    try {
-      const data = await fbGet('/rcc/pendingCounts');
-      allCounts = data ? Object.values(data) : [];
-    } catch(e) { allCounts = []; }
+    try { const d = await fbGet('/rcc/pendingCounts'); allCounts = d ? Object.values(d) : []; }
+    catch(e) { allCounts = []; }
   }
   const sorted = [...allCounts].sort((a,b) => (b.date||'').localeCompare(a.date||''));
   document.getElementById('stock-history').innerHTML = !sorted.length
     ? '<div class="empty">No stock counts submitted yet.</div>'
     : sorted.slice(0,10).map(c => {
-        const itemCount = c.lines?.length || 0;
+        const n       = c.lines?.length || 0;
         const preview = (c.lines||[]).slice(0,4).map(l => `${l.name}: ${l.closeQty} ${l.closeUnit}`).join(', ');
         return `
           <div class="history-card">
-            <div class="hc-date">${fmtDate(c.date)} · ${itemCount} items</div>
-            <div class="hc-lines">${preview}${itemCount>4?` +${itemCount-4} more…`:''}</div>
+            <div class="hc-date">${fmtDate(c.date)} &nbsp;·&nbsp; ${n} items</div>
+            <div class="hc-lines">${preview}${n>4?` +${n-4} more…`:''}</div>
           </div>`;
-      }).join('');
+      }).join('') + '<div style="height:20px"></div>';
 }
+
+// ══════════════════════════════════════════════════════════════════════════
+// YIELD TAB
+// ══════════════════════════════════════════════════════════════════════════
+const WEIGHT_FACTORS = { g: 1, kg: 1000, lb: 453.592, oz: 28.3495 };
+function toGrams(qty, unit) { return qty * (WEIGHT_FACTORS[unit] || 1); }
+
+let allYieldLogs = null;
+
+function populateYieldIngredients() {
+  const sel = document.getElementById('yl-ingredient');
+  const current = sel.value;
+  // Exclude batch ingredients (those whose name ends with ' [batch]')
+  const list = [...ingredients]
+    .filter(i => !i.name.endsWith('[batch]'))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  sel.innerHTML = '<option value="">— Select ingredient —</option>' +
+    list.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
+  if (current) sel.value = current;
+}
+
+function updateYieldPreview() {
+  const inputQty   = parseFloat(document.getElementById('yl-input-qty').value)  || 0;
+  const inputUnit  = document.getElementById('yl-input-unit').value;
+  const outputQty  = parseFloat(document.getElementById('yl-output-qty').value) || 0;
+  const outputUnit = document.getElementById('yl-output-unit').value;
+  const el         = document.getElementById('yl-preview');
+  const submitBtn  = document.getElementById('yl-submit-btn');
+  const ingId      = document.getElementById('yl-ingredient').value;
+
+  const ready = ingId && inputQty > 0 && outputQty > 0;
+  submitBtn.disabled = !ready;
+
+  if (!inputQty || !outputQty) {
+    el.innerHTML = '<span style="color:var(--muted);font-size:.88rem">Enter weights above to see yield</span>';
+    return;
+  }
+
+  const inputG  = toGrams(inputQty, inputUnit);
+  const outputG = toGrams(outputQty, outputUnit);
+  const yPct    = inputG > 0 ? (outputG / inputG * 100) : 0;
+  const wasteG  = inputG - outputG;
+  const col     = yPct >= 80 ? 'var(--accent2)' : yPct >= 60 ? 'var(--warn)' : 'var(--danger)';
+
+  el.innerHTML = `
+    <div class="yp-item">
+      <span style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Yield</span>
+      <span class="yp-val" style="color:${col}">${yPct.toFixed(1)}%</span>
+    </div>
+    <div class="yp-item">
+      <span style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Waste</span>
+      <span class="yp-val" style="color:var(--muted)">${(100 - yPct).toFixed(1)}%</span>
+    </div>
+    <div class="yp-item" style="font-size:.82rem;color:var(--muted);align-self:flex-end;padding-bottom:4px">
+      ${wasteG >= 1000 ? (wasteG/1000).toFixed(2)+' kg' : wasteG.toFixed(0)+' g'} lost
+    </div>`;
+}
+
+function resetYieldForm() {
+  document.getElementById('yl-ingredient').value  = '';
+  document.getElementById('yl-input-qty').value   = '';
+  document.getElementById('yl-input-unit').value  = 'kg';
+  document.getElementById('yl-output-qty').value  = '';
+  document.getElementById('yl-output-unit').value = 'kg';
+  document.getElementById('yl-note').value        = '';
+  updateYieldPreview();
+}
+
+async function submitYieldLog() {
+  const ingredientId = document.getElementById('yl-ingredient').value;
+  const inputQty     = parseFloat(document.getElementById('yl-input-qty').value);
+  const inputUnit    = document.getElementById('yl-input-unit').value;
+  const outputQty    = parseFloat(document.getElementById('yl-output-qty').value);
+  const outputUnit   = document.getElementById('yl-output-unit').value;
+  const note         = document.getElementById('yl-note').value.trim();
+
+  if (!ingredientId)           { toast('Select an ingredient.', 'error'); return; }
+  if (!inputQty || inputQty <= 0)  { toast('Input weight must be > 0.', 'error'); return; }
+  if (!outputQty || outputQty <= 0){ toast('Output weight must be > 0.', 'error'); return; }
+
+  const inputG  = toGrams(inputQty, inputUnit);
+  const outputG = toGrams(outputQty, outputUnit);
+  if (outputG > inputG + 0.001) { toast('Output cannot be heavier than input.', 'error'); return; }
+
+  const ing     = ingredients.find(i => i.id === ingredientId);
+  const yPct    = (outputG / inputG * 100).toFixed(1);
+  const payload = { id: uid(), date: todayStr(), ingredientId, ingredientName: ing?.name || '', inputQty, inputUnit, outputQty, outputUnit, note };
+
+  const btn = document.getElementById('yl-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  try {
+    await fbPost('/rcc/pendingYieldLogs', payload);
+    allYieldLogs = null;
+    resetYieldForm();
+    toast(`${ing?.name || 'Item'} yield ${yPct}% logged.`);
+    loadYieldHistory();
+  } catch(e) {
+    toast('Submit failed: ' + e.message, 'error');
+    btn.disabled = false;
+  }
+  btn.textContent = 'Submit';
+}
+
+async function loadYieldHistory() {
+  if (allYieldLogs === null) {
+    try {
+      const d = await fbGet('/rcc/pendingYieldLogs');
+      allYieldLogs = d ? Object.values(d) : [];
+    } catch(e) { allYieldLogs = []; }
+  }
+
+  const today = todayStr();
+  const todayLogs = allYieldLogs
+    .filter(l => l.date === today)
+    .sort((a, b) => (b.id||'').localeCompare(a.id||''));
+
+  document.getElementById('yl-count').textContent = todayLogs.length ? `${todayLogs.length} logged today` : '';
+  document.getElementById('yield-history').innerHTML = !todayLogs.length
+    ? '<div class="empty">No yield logs yet today.<br>Fill in the form above to log your first prep.</div>'
+    : todayLogs.map(l => {
+        const inputG  = toGrams(l.inputQty, l.inputUnit);
+        const outputG = toGrams(l.outputQty, l.outputUnit);
+        const yPct    = inputG > 0 ? (outputG / inputG * 100) : 0;
+        const col     = yPct >= 80 ? 'var(--accent2)' : yPct >= 60 ? 'var(--warn)' : 'var(--danger)';
+        return `
+          <div class="yield-card">
+            <div class="yc-head">
+              <span class="yc-name">${l.ingredientName || l.ingredientId}</span>
+              <span class="yc-pct" style="color:${col}">${yPct.toFixed(1)}%</span>
+            </div>
+            <div class="yc-detail">
+              ${l.inputQty} ${l.inputUnit} in &rarr; ${l.outputQty} ${l.outputUnit} out
+              ${l.note ? `&nbsp;·&nbsp; ${l.note}` : ''}
+            </div>
+          </div>`;
+      }).join('') + '<div style="height:20px"></div>';
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────
+init();
 </script>
 </body>
 </html>
