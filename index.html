@@ -13,7 +13,6 @@
     }
     html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 16px; }
 
-    /* ── HEADER ── */
     header {
       position: fixed; top: 0; left: 0; right: 0; z-index: 50;
       background: var(--surface); border-bottom: 1px solid var(--border);
@@ -31,7 +30,6 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* ── LOADING ── */
     #screen-loading {
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; height: calc(100vh - 56px); color: var(--muted);
@@ -43,7 +41,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── BUTTONS ── */
     .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: .95rem; font-weight: 600; transition: .15s; }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-success { background: var(--accent2); color: #0f1117; }
@@ -52,7 +49,6 @@
     .btn:active  { opacity: .8; }
     .btn:disabled { opacity: .4; pointer-events: none; }
 
-    /* ── DATE NAV ── */
     .date-nav {
       display: flex; align-items: center; justify-content: center;
       background: var(--surface); border-bottom: 1px solid var(--border);
@@ -70,7 +66,6 @@
       background: rgba(78,204,163,.15); padding: 2px 7px; border-radius: 10px; vertical-align: middle;
     }
 
-    /* ── SECTION HEADERS ── */
     .section-head {
       display: flex; align-items: center; gap: 10px;
       padding: 9px 16px; background: var(--surface2);
@@ -79,13 +74,11 @@
     .s-label { font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
     .s-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 
-    /* ── PROGRESS BAR ── */
     .pbar  { height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; flex: 1; }
     .pfill { height: 100%; border-radius: 4px; transition: width .3s; }
     #prep-overall { display: flex; align-items: center; gap: 12px; padding: 10px 16px; }
     .prog-label { font-size: .82rem; color: var(--muted); white-space: nowrap; }
 
-    /* ── CATEGORY HEADER ── */
     .cat-head {
       display: flex; align-items: center; gap: 10px;
       padding: 8px 16px; background: rgba(35,38,54,.9);
@@ -97,22 +90,44 @@
     /* ── TASK ROW ── */
     .task-row {
       display: flex; align-items: center; gap: 12px;
-      padding: 0 16px; min-height: 54px; border-bottom: 1px solid var(--border); transition: background .15s;
+      padding: 0 16px; min-height: 56px; transition: background .15s;
     }
     .task-row.done { background: rgba(78,204,163,.07); }
+    .task-row.tappable { cursor: pointer; }
+    .task-row.tappable:active { background: rgba(108,99,255,.08); }
     .task-row input[type=checkbox] { width: 22px; height: 22px; cursor: pointer; accent-color: var(--accent2); flex-shrink: 0; }
     .task-row input[type=checkbox]:disabled { opacity: .35; }
     .task-name { flex: 1; font-size: .95rem; }
     .task-name.done { color: var(--muted); text-decoration: line-through; }
-    .task-target { font-size: .78rem; color: var(--muted); white-space: nowrap; min-width: 56px; text-align: right; }
-    .task-actual {
-      width: 96px; padding: 6px 9px; background: var(--surface2);
-      border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: .82rem; flex-shrink: 0;
-    }
-    .task-actual:disabled { opacity: .3; }
-    .task-actual:focus { outline: none; border-color: var(--accent2); }
+    .task-target { font-size: .78rem; color: var(--muted); white-space: nowrap; }
 
-    /* ── PRODUCTION CARD ── */
+    /* ── YIELD PANEL (inline per task) ── */
+    .yield-panel {
+      padding: 14px 16px 16px;
+      background: rgba(26,29,39,.95);
+      border-top: 1px solid var(--border);
+      border-bottom: 2px solid var(--accent2);
+    }
+    .yp-weights { display: flex; gap: 10px; margin-bottom: 10px; }
+    .yp-col { flex: 1; }
+    .yp-col-label { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 5px; }
+    .yp-input-row { display: flex; gap: 6px; }
+    .yp-input-row input[type=number] {
+      flex: 1; padding: 12px 10px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 1rem;
+    }
+    .yp-input-row input[type=number]:focus { outline: none; border-color: var(--accent2); }
+    .yp-input-row select {
+      width: 66px; padding: 12px 4px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: .88rem; text-align: center;
+    }
+    .yp-preview {
+      min-height: 36px; margin-bottom: 12px;
+      display: flex; gap: 20px; align-items: center; font-size: .9rem; padding: 2px 0;
+    }
+    .yp-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+    /* ── PRODUCTION ── */
     .prod-card {
       margin: 8px 14px; padding: 14px 16px;
       background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
@@ -120,8 +135,6 @@
     .prod-recipe { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
     .prod-meta   { font-size: .84rem; color: var(--muted); }
     .prod-note   { font-size: .82rem; color: var(--warn); margin-top: 6px; }
-
-    /* ── LOG PRODUCTION FORM ── */
     #log-prod-form {
       margin: 10px 14px; padding: 16px;
       background: var(--surface); border: 1px solid var(--accent); border-radius: 10px;
@@ -147,7 +160,7 @@
       display: flex; align-items: center; gap: 12px;
       padding: 8px 16px; border-bottom: 1px solid var(--border); min-height: 52px;
     }
-    .stock-name      { flex: 1; font-size: .95rem; }
+    .stock-name       { flex: 1; font-size: .95rem; }
     .stock-unit-label { font-size: .78rem; color: var(--muted); white-space: nowrap; width: 36px; }
     .stock-input {
       width: 90px; padding: 8px 10px; background: var(--surface2);
@@ -163,7 +176,6 @@
     }
     .stock-submit-info { font-size: .82rem; color: var(--muted); }
 
-    /* ── HISTORY CARDS ── */
     .history-card {
       margin: 8px 14px; padding: 14px 16px;
       background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
@@ -171,7 +183,6 @@
     .hc-date  { font-size: .78rem; color: var(--muted); margin-bottom: 6px; }
     .hc-lines { font-size: .82rem; color: var(--muted); line-height: 1.6; }
 
-    /* ── STATUS BAR ── */
     .status-bar {
       background: var(--surface2); border-bottom: 1px solid var(--border);
       padding: 6px 16px; font-size: .76rem; color: var(--muted);
@@ -181,44 +192,8 @@
     .dot.green { background: var(--accent2); }
     .dot.red   { background: var(--danger); }
 
-    /* ── YIELD TAB ── */
-    .yield-form {
-      margin: 12px 14px; padding: 18px;
-      background: var(--surface); border: 1px solid var(--accent2); border-radius: 12px;
-    }
-    .yield-form h4 { font-size: 1rem; color: var(--accent2); margin-bottom: 16px; font-weight: 700; }
-    .yield-field { margin-bottom: 14px; }
-    .yield-field label { display: block; font-size: .78rem; color: var(--muted); margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
-    .yield-form select, .yield-form input[type=number], .yield-form input[type=text] {
-      width: 100%; padding: 13px 14px; background: var(--surface2);
-      border: 1px solid var(--border); border-radius: 8px; color: var(--text);
-      font-size: 1rem; margin: 0;
-    }
-    .yield-form select:focus, .yield-form input:focus { outline: none; border-color: var(--accent2); }
-    .weight-row { display: flex; gap: 8px; }
-    .weight-row input { flex: 1; }
-    .weight-row select { width: 80px; flex-shrink: 0; }
-    .yield-preview {
-      background: var(--surface2); border-radius: 8px; padding: 14px 16px;
-      margin-bottom: 14px; display: flex; gap: 24px; flex-wrap: wrap; align-items: center;
-      min-height: 52px;
-    }
-    .yield-preview .yp-item { font-size: .9rem; }
-    .yield-preview .yp-val  { font-size: 1.3rem; font-weight: 700; display: block; margin-top: 2px; }
-    .yield-submit-row { display: flex; gap: 10px; justify-content: flex-end; }
-    .yield-card {
-      margin: 8px 14px; padding: 14px 16px;
-      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-    }
-    .yc-head   { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-    .yc-name   { font-size: 1rem; font-weight: 700; }
-    .yc-pct    { font-size: 1.1rem; font-weight: 700; margin-left: auto; }
-    .yc-detail { font-size: .82rem; color: var(--muted); }
-
-    /* ── EMPTY ── */
     .empty { text-align: center; color: var(--muted); padding: 40px 20px; font-size: .9rem; line-height: 1.6; }
 
-    /* ── TOAST ── */
     #toast {
       position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
       background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
@@ -237,20 +212,18 @@
   <nav>
     <button class="active" id="tab-btn-prep"       onclick="showTab('prep')">Prep</button>
     <button               id="tab-btn-production"  onclick="showTab('production')">Production</button>
-    <button               id="tab-btn-yield"       onclick="showTab('yield')">Yield</button>
     <button               id="tab-btn-stock"       onclick="showTab('stock')">Stock Take</button>
   </nav>
 </header>
 
 <main>
 
-  <!-- LOADING -->
   <div id="screen-loading">
     <div class="spinner"></div>
     <div>Loading from Firebase…</div>
   </div>
 
-  <!-- ══ TAB: PREP ══════════════════════════════════════════════════════ -->
+  <!-- ══ TAB: PREP (with inline yield logging) ══ -->
   <div class="tab-content" id="tab-prep">
 
     <div class="status-bar">
@@ -274,7 +247,7 @@
 
   </div>
 
-  <!-- ══ TAB: PRODUCTION ════════════════════════════════════════════════ -->
+  <!-- ══ TAB: PRODUCTION ══ -->
   <div class="tab-content" id="tab-production">
 
     <div class="date-nav">
@@ -308,71 +281,7 @@
 
   </div>
 
-  <!-- ══ TAB: YIELD ════════════════════════════════════════════════════ -->
-  <div class="tab-content" id="tab-yield">
-
-    <div class="status-bar">
-      <div class="dot green"></div>
-      <span>Log input &amp; output weight to track real yield</span>
-    </div>
-
-    <!-- Log form -->
-    <div class="yield-form">
-      <h4>Log Yield</h4>
-
-      <div class="yield-field">
-        <label>Ingredient</label>
-        <select id="yl-ingredient" onchange="updateYieldPreview()">
-          <option value="">— Select ingredient —</option>
-        </select>
-      </div>
-
-      <div class="yield-field">
-        <label>Input Weight (before prep)</label>
-        <div class="weight-row">
-          <input type="number" id="yl-input-qty" placeholder="0.000" min="0" step="0.001" inputmode="decimal" oninput="updateYieldPreview()">
-          <select id="yl-input-unit" onchange="updateYieldPreview()">
-            <option>g</option><option selected>kg</option><option>lb</option><option>oz</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="yield-field">
-        <label>Output Weight (after prep)</label>
-        <div class="weight-row">
-          <input type="number" id="yl-output-qty" placeholder="0.000" min="0" step="0.001" inputmode="decimal" oninput="updateYieldPreview()">
-          <select id="yl-output-unit" onchange="updateYieldPreview()">
-            <option>g</option><option selected>kg</option><option>lb</option><option>oz</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Live preview -->
-      <div class="yield-preview" id="yl-preview">
-        <span style="color:var(--muted);font-size:.88rem">Enter weights above to see yield</span>
-      </div>
-
-      <div class="yield-field">
-        <label>Note (optional)</label>
-        <input type="text" id="yl-note" placeholder="e.g. Tuesday morning, fresh delivery">
-      </div>
-
-      <div class="yield-submit-row">
-        <button class="btn btn-ghost btn-sm" onclick="resetYieldForm()">Clear</button>
-        <button class="btn btn-success" id="yl-submit-btn" onclick="submitYieldLog()" disabled>Submit</button>
-      </div>
-    </div>
-
-    <!-- Today's logs -->
-    <div class="section-head" style="margin-top:8px">
-      <span class="s-label">Today's Yield Logs</span>
-      <div class="s-right"><span id="yl-count" style="font-size:.78rem;color:var(--muted)"></span></div>
-    </div>
-    <div id="yield-history" style="padding-bottom:40px"></div>
-
-  </div>
-
-  <!-- ══ TAB: STOCK TAKE ════════════════════════════════════════════════ -->
+  <!-- ══ TAB: STOCK TAKE ══ -->
   <div class="tab-content" id="tab-stock">
 
     <div class="status-bar">
@@ -404,11 +313,12 @@
 const FB_URL = 'https://restaurant-cost-app-default-rtdb.asia-southeast1.firebasedatabase.app';
 
 // ── UTILS ─────────────────────────────────────────────────────────────────
-// Use LOCAL date (not UTC) — critical for UTC+10/+11 timezones
 const localDateStr = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const todayStr = () => localDateStr(new Date());
 const uid      = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 const PREP_CATS = ['Slice','Cook','Prep','Mix','Portion','Wash & Portion','Precook'];
+const WEIGHT_FACTORS = { g: 1, kg: 1000, lb: 453.592, oz: 28.3495 };
+function toGrams(qty, unit) { return qty * (WEIGHT_FACTORS[unit] || 1); }
 
 function toast(msg, type='success') {
   const t = document.getElementById('toast');
@@ -433,10 +343,12 @@ function setDateLabel(labelId, prevBtnId, nextBtnId, date) {
 let prepTasks    = [];
 let batchRecipes = [];
 let ingredients  = [];
-let allProductions = null;
-let allCounts      = null;
-let prepChecksCache = {};
-let countLines      = {};
+let allProductions   = null;
+let allCounts        = null;
+let allYieldLogs     = null;
+let prepChecksCache  = {};
+let countLines       = {};
+const expandedPanels = new Set();  // task IDs with open yield panel
 
 let prepDate = todayStr();
 let prodDate = todayStr();
@@ -479,6 +391,7 @@ async function init() {
     await Promise.all([
       loadPrepChecks(prepDate),
       loadAllProductions(),
+      loadAllYieldLogs(),
     ]);
 
     document.getElementById('screen-loading').style.display = 'none';
@@ -496,16 +409,15 @@ async function init() {
 }
 
 function setStatus(ok) {
-  ['prep'].forEach(id => {
-    const dot = document.getElementById(id + '-status-dot');
-    const txt = document.getElementById(id + '-status-text');
-    if (dot) { dot.className = 'dot ' + (ok ? 'green' : 'red'); }
-    if (txt) txt.textContent = ok ? 'Firebase connected' : 'Connection error';
-  });
+  const dot = document.getElementById('prep-status-dot');
+  const txt = document.getElementById('prep-status-text');
+  if (dot) dot.className = 'dot ' + (ok ? 'green' : 'red');
+  if (txt) txt.textContent = ok ? 'Firebase connected' : 'Connection error';
 }
 
 async function refreshAll() {
-  allProductions = null; allCounts = null; prepChecksCache = {};
+  allProductions = null; allCounts = null; allYieldLogs = null;
+  prepChecksCache = {}; expandedPanels.clear();
   await init();
 }
 
@@ -519,7 +431,6 @@ function showTab(tab) {
   document.getElementById('tab-btn-' + tab).classList.add('active');
   if (tab === 'prep')       { setDateLabel('prep-date-label','prep-btn-prev','prep-btn-next',prepDate); renderPrep(); }
   if (tab === 'production') { setDateLabel('prod-date-label','prod-btn-prev','prod-btn-next',prodDate); renderProduction(); }
-  if (tab === 'yield')      { populateYieldIngredients(); loadYieldHistory(); }
   if (tab === 'stock')      { renderStock(); loadStockHistory(); }
 }
 
@@ -534,7 +445,7 @@ document.addEventListener('touchend', e => {
 }, { passive: true });
 
 // ══════════════════════════════════════════════════════════════════════════
-// PREP TAB
+// PREP TAB — with inline yield logging per task
 // ══════════════════════════════════════════════════════════════════════════
 function prepChangeDate(delta) {
   const d = new Date(prepDate + 'T00:00:00');
@@ -542,6 +453,7 @@ function prepChangeDate(delta) {
   const next = localDateStr(d);
   if (next > todayStr()) return;
   prepDate = next;
+  expandedPanels.clear();
   setDateLabel('prep-date-label','prep-btn-prev','prep-btn-next', prepDate);
   loadPrepChecks(prepDate).then(() => renderPrep());
 }
@@ -552,6 +464,18 @@ async function loadPrepChecks(date) {
     const data = await fbGet('/rcc/prepDaily/' + date);
     prepChecksCache[date] = data?.checks || {};
   } catch(e) { prepChecksCache[date] = {}; }
+}
+
+async function loadAllYieldLogs() {
+  if (allYieldLogs !== null) return;
+  try {
+    const d = await fbGet('/rcc/pendingYieldLogs');
+    allYieldLogs = d ? Object.values(d) : [];
+  } catch(e) { allYieldLogs = []; }
+}
+
+function getTaskYieldToday(taskId) {
+  return (allYieldLogs || []).find(l => l.taskId === taskId && l.date === todayStr());
 }
 
 function renderPrep() {
@@ -571,10 +495,11 @@ function renderPrep() {
   const allCats = [...PREP_CATS, ...Object.keys(grouped).filter(c => !PREP_CATS.includes(c))];
 
   document.getElementById('prep-content').innerHTML = allCats.map(cat => {
-    const tasks = (grouped[cat]||[]).sort((a,b)=>(a.order??0)-(b.order??0));
+    const tasks = (grouped[cat]||[]).sort((a,b) => (a.order??0)-(b.order??0));
     if (!tasks.length) return '';
     const catDone = tasks.filter(t => checks[t.id]?.done).length;
     const catPct  = Math.round(catDone / tasks.length * 100);
+
     return `
       <div class="cat-head">
         <span class="cat-name">${cat}</span>
@@ -582,38 +507,166 @@ function renderPrep() {
         <span class="cat-count">${catDone}/${tasks.length}</span>
       </div>
       ${tasks.map(t => {
-        const c = checks[t.id] || {};
-        const isDone = !!c.done;
+        const c         = checks[t.id] || {};
+        const isDone    = !!c.done;
+        const isOpen    = expandedPanels.has(t.id) && isToday && !isDone;
+        const yieldLog  = isToday ? getTaskYieldToday(t.id) : null;
+
+        // Right badge
+        let badge = '';
+        if (isDone && yieldLog) {
+          const iG  = toGrams(yieldLog.inputQty, yieldLog.inputUnit);
+          const oG  = toGrams(yieldLog.outputQty, yieldLog.outputUnit);
+          const yp  = iG > 0 ? (oG / iG * 100) : 0;
+          const col = yp >= 80 ? 'var(--accent2)' : yp >= 60 ? 'var(--warn)' : 'var(--danger)';
+          badge = `<span style="font-size:.8rem;font-weight:700;color:${col}">${yp.toFixed(1)}%</span>`;
+        } else if (!isDone && isToday) {
+          badge = `<span id="yb-${t.id}" style="font-size:.72rem;color:var(--muted)">${isOpen ? '▲' : '▼ yield'}</span>`;
+        }
+
+        // Inline yield panel — only rendered for today's incomplete tasks
+        const panel = (!isDone && isToday) ? `
+          <div class="yield-panel" id="yp-${t.id}" style="display:${isOpen ? 'block' : 'none'}">
+            <div class="yp-weights">
+              <div class="yp-col">
+                <div class="yp-col-label">Input weight (before prep)</div>
+                <div class="yp-input-row">
+                  <input type="number" id="yin-${t.id}" placeholder="0.000" min="0" step="0.001" inputmode="decimal" oninput="calcYield('${t.id}')">
+                  <select id="yinu-${t.id}" onchange="calcYield('${t.id}')">
+                    <option>g</option><option selected>kg</option><option>lb</option><option>oz</option>
+                  </select>
+                </div>
+              </div>
+              <div class="yp-col">
+                <div class="yp-col-label">Output weight (after prep)</div>
+                <div class="yp-input-row">
+                  <input type="number" id="yout-${t.id}" placeholder="0.000" min="0" step="0.001" inputmode="decimal" oninput="calcYield('${t.id}')">
+                  <select id="youtu-${t.id}" onchange="calcYield('${t.id}')">
+                    <option>g</option><option selected>kg</option><option>lb</option><option>oz</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="yp-preview" id="yprev-${t.id}">
+              <span style="color:var(--muted);font-size:.82rem">Enter weights above to see yield</span>
+            </div>
+            <div class="yp-actions">
+              <button class="btn btn-ghost btn-sm" onclick="markDone('${t.id}')">Done (no yield)</button>
+              <button class="btn btn-success" style="padding:11px 22px;font-size:1rem" onclick="saveAndDone('${t.id}')">Save &amp; Done</button>
+            </div>
+          </div>` : '';
+
         return `
-          <div class="task-row${isDone?' done':''}">
-            <input type="checkbox" ${isDone?'checked':''} ${isToday?'':'disabled'} onchange="toggleTask('${t.id}')">
-            <span class="task-name${isDone?' done':''}">${t.name}</span>
-            <span class="task-target">${t.targetQty||''}</span>
-            <input type="text" class="task-actual" value="${c.actualQty||''}" placeholder="actual"
-              ${(isDone&&isToday)?'':'disabled'} onchange="setActualQty('${t.id}',this.value)">
+          <div style="border-bottom:1px solid var(--border)">
+            <div class="task-row${isDone ? ' done' : ''}${isToday && !isDone ? ' tappable' : ''}"
+              onclick="${isToday && !isDone ? `togglePanel('${t.id}')` : ''}">
+              <input type="checkbox" ${isDone ? 'checked' : ''} ${isToday ? '' : 'disabled'}
+                onclick="event.stopPropagation()"
+                onchange="onCheckbox('${t.id}', this.checked)">
+              <span class="task-name${isDone ? ' done' : ''}">${t.name}</span>
+              ${t.targetQty ? `<span class="task-target">${t.targetQty}</span>` : ''}
+              ${badge}
+            </div>
+            ${panel}
           </div>`;
       }).join('')}`;
-  }).join('') || '<div class="empty">No prep tasks synced yet.<br>Main app → ⚙ Settings → ↑ Sync Prep Tasks</div>';
+  }).join('') || '<div class="empty">No prep tasks synced yet.<br>Main app → ⚙ Settings → Sync Prep Tasks</div>';
 }
 
-async function toggleTask(taskId) {
+// Toggle yield panel without full re-render (preserves input values)
+function togglePanel(taskId) {
+  if (expandedPanels.has(taskId)) {
+    expandedPanels.delete(taskId);
+  } else {
+    expandedPanels.add(taskId);
+  }
+  const isOpen = expandedPanels.has(taskId);
+  const panel  = document.getElementById('yp-' + taskId);
+  const badge  = document.getElementById('yb-' + taskId);
+  if (panel) panel.style.display = isOpen ? 'block' : 'none';
+  if (badge) badge.textContent = isOpen ? '▲' : '▼ yield';
+}
+
+// Live yield calculation inside the panel
+function calcYield(taskId) {
+  const iQty  = parseFloat(document.getElementById('yin-'   + taskId)?.value) || 0;
+  const iUnit = document.getElementById('yinu-'  + taskId)?.value || 'kg';
+  const oQty  = parseFloat(document.getElementById('yout-'  + taskId)?.value) || 0;
+  const oUnit = document.getElementById('youtu-' + taskId)?.value || 'kg';
+  const el    = document.getElementById('yprev-' + taskId);
+  if (!el) return;
+
+  if (!iQty || !oQty) {
+    el.innerHTML = '<span style="color:var(--muted);font-size:.82rem">Enter weights above to see yield</span>';
+    return;
+  }
+
+  const iG     = toGrams(iQty, iUnit);
+  const oG     = toGrams(oQty, oUnit);
+  const yPct   = iG > 0 ? (oG / iG * 100) : 0;
+  const wasteG = iG - oG;
+  const col    = yPct >= 80 ? 'var(--accent2)' : yPct >= 60 ? 'var(--warn)' : 'var(--danger)';
+
+  el.innerHTML = `
+    <span>Yield: <strong style="color:${col};font-size:1.15rem">${yPct.toFixed(1)}%</strong></span>
+    <span style="color:var(--muted)">Waste: ${wasteG >= 1000 ? (wasteG/1000).toFixed(2)+' kg' : wasteG.toFixed(0)+' g'}</span>`;
+}
+
+// Checkbox tap — quick done/undone without yield
+async function onCheckbox(taskId, isChecked) {
   if (prepDate !== todayStr()) return;
   const checks = { ...(prepChecksCache[prepDate]||{}) };
-  const c = checks[taskId] || {};
-  checks[taskId] = { ...c, done: !c.done };
+  checks[taskId] = { ...(checks[taskId]||{}), done: isChecked };
   prepChecksCache[prepDate] = checks;
+  if (isChecked) expandedPanels.delete(taskId);
   renderPrep();
   try { await fbPut('/rcc/prepDaily/' + prepDate, { checks }); }
   catch(e) { toast('Save failed: ' + e.message, 'error'); setStatus(false); }
 }
 
-async function setActualQty(taskId, val) {
-  if (prepDate !== todayStr()) return;
-  const checks = { ...(prepChecksCache[prepDate]||{}) };
-  checks[taskId] = { ...(checks[taskId]||{}), actualQty: val };
-  prepChecksCache[prepDate] = checks;
-  try { await fbPut('/rcc/prepDaily/' + prepDate, { checks }); }
-  catch(e) { toast('Save failed: ' + e.message, 'error'); }
+// Mark done without yield
+async function markDone(taskId) {
+  await onCheckbox(taskId, true);
+}
+
+// Save yield log + mark done
+async function saveAndDone(taskId) {
+  const task  = prepTasks.find(t => t.id === taskId);
+  const iQty  = parseFloat(document.getElementById('yin-'   + taskId)?.value);
+  const iUnit = document.getElementById('yinu-'  + taskId)?.value || 'kg';
+  const oQty  = parseFloat(document.getElementById('yout-'  + taskId)?.value);
+  const oUnit = document.getElementById('youtu-' + taskId)?.value || 'kg';
+
+  if (!iQty || iQty <= 0) { toast('Enter input weight.', 'error'); return; }
+  if (!oQty || oQty <= 0) { toast('Enter output weight.', 'error'); return; }
+
+  const iG = toGrams(iQty, iUnit);
+  const oG = toGrams(oQty, oUnit);
+  if (oG > iG + 0.001) { toast('Output cannot be heavier than input.', 'error'); return; }
+
+  const taskName = task?.name || '';
+  // Try to find matching ingredient by name
+  const ing = ingredients.find(i => i.name.toLowerCase() === taskName.toLowerCase());
+  const yPct = (oG / iG * 100).toFixed(1);
+
+  const payload = {
+    id: uid(), date: todayStr(), taskId,
+    ingredientId:   ing?.id   || null,
+    ingredientName: ing?.name || taskName,
+    inputQty: iQty, inputUnit: iUnit,
+    outputQty: oQty, outputUnit: oUnit,
+    note: ''
+  };
+
+  try {
+    await fbPost('/rcc/pendingYieldLogs', payload);
+    allYieldLogs = null;
+    await loadAllYieldLogs();
+    await markDone(taskId);
+    toast(`${taskName}: ${yPct}% yield saved.`);
+  } catch(e) {
+    toast('Submit failed: ' + e.message, 'error');
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -626,7 +679,6 @@ function prodChangeDate(delta) {
   if (next > todayStr()) return;
   prodDate = next;
   setDateLabel('prod-date-label','prod-btn-prev','prod-btn-next', prodDate);
-  // Show log button only for today
   document.getElementById('log-prod-btn').style.display = prodDate === todayStr() ? '' : 'none';
   renderProduction();
 }
@@ -642,9 +694,9 @@ function toggleLogForm() {
   const showing = form.style.display !== 'none';
   form.style.display = showing ? 'none' : '';
   if (!showing) {
-    document.getElementById('lp-recipe').value = '';
+    document.getElementById('lp-recipe').value  = '';
     document.getElementById('lp-batches').value = '1';
-    document.getElementById('lp-note').value = '';
+    document.getElementById('lp-note').value    = '';
   }
 }
 
@@ -715,7 +767,7 @@ function renderStock() {
             placeholder="0" min="0" step="0.01" inputmode="decimal"
             oninput="updateCountLine('${i.id}',this.value)">
         </div>`).join('');
-  }).join('') || '<div class="empty">No ingredients synced yet.<br>Main app → ⚙ Settings → ↑ Sync Ingredients</div>';
+  }).join('') || '<div class="empty">No ingredients synced yet.</div>';
   updateStockBtn();
 }
 
@@ -772,145 +824,6 @@ async function loadStockHistory() {
           <div class="history-card">
             <div class="hc-date">${fmtDate(c.date)} &nbsp;·&nbsp; ${n} items</div>
             <div class="hc-lines">${preview}${n>4?` +${n-4} more…`:''}</div>
-          </div>`;
-      }).join('') + '<div style="height:20px"></div>';
-}
-
-// ══════════════════════════════════════════════════════════════════════════
-// YIELD TAB
-// ══════════════════════════════════════════════════════════════════════════
-const WEIGHT_FACTORS = { g: 1, kg: 1000, lb: 453.592, oz: 28.3495 };
-function toGrams(qty, unit) { return qty * (WEIGHT_FACTORS[unit] || 1); }
-
-let allYieldLogs = null;
-
-function populateYieldIngredients() {
-  const sel = document.getElementById('yl-ingredient');
-  const current = sel.value;
-  // Exclude batch ingredients (those whose name ends with ' [batch]')
-  const list = [...ingredients]
-    .filter(i => !i.name.endsWith('[batch]'))
-    .sort((a, b) => a.name.localeCompare(b.name));
-  sel.innerHTML = '<option value="">— Select ingredient —</option>' +
-    list.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
-  if (current) sel.value = current;
-}
-
-function updateYieldPreview() {
-  const inputQty   = parseFloat(document.getElementById('yl-input-qty').value)  || 0;
-  const inputUnit  = document.getElementById('yl-input-unit').value;
-  const outputQty  = parseFloat(document.getElementById('yl-output-qty').value) || 0;
-  const outputUnit = document.getElementById('yl-output-unit').value;
-  const el         = document.getElementById('yl-preview');
-  const submitBtn  = document.getElementById('yl-submit-btn');
-  const ingId      = document.getElementById('yl-ingredient').value;
-
-  const ready = ingId && inputQty > 0 && outputQty > 0;
-  submitBtn.disabled = !ready;
-
-  if (!inputQty || !outputQty) {
-    el.innerHTML = '<span style="color:var(--muted);font-size:.88rem">Enter weights above to see yield</span>';
-    return;
-  }
-
-  const inputG  = toGrams(inputQty, inputUnit);
-  const outputG = toGrams(outputQty, outputUnit);
-  const yPct    = inputG > 0 ? (outputG / inputG * 100) : 0;
-  const wasteG  = inputG - outputG;
-  const col     = yPct >= 80 ? 'var(--accent2)' : yPct >= 60 ? 'var(--warn)' : 'var(--danger)';
-
-  el.innerHTML = `
-    <div class="yp-item">
-      <span style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Yield</span>
-      <span class="yp-val" style="color:${col}">${yPct.toFixed(1)}%</span>
-    </div>
-    <div class="yp-item">
-      <span style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Waste</span>
-      <span class="yp-val" style="color:var(--muted)">${(100 - yPct).toFixed(1)}%</span>
-    </div>
-    <div class="yp-item" style="font-size:.82rem;color:var(--muted);align-self:flex-end;padding-bottom:4px">
-      ${wasteG >= 1000 ? (wasteG/1000).toFixed(2)+' kg' : wasteG.toFixed(0)+' g'} lost
-    </div>`;
-}
-
-function resetYieldForm() {
-  document.getElementById('yl-ingredient').value  = '';
-  document.getElementById('yl-input-qty').value   = '';
-  document.getElementById('yl-input-unit').value  = 'kg';
-  document.getElementById('yl-output-qty').value  = '';
-  document.getElementById('yl-output-unit').value = 'kg';
-  document.getElementById('yl-note').value        = '';
-  updateYieldPreview();
-}
-
-async function submitYieldLog() {
-  const ingredientId = document.getElementById('yl-ingredient').value;
-  const inputQty     = parseFloat(document.getElementById('yl-input-qty').value);
-  const inputUnit    = document.getElementById('yl-input-unit').value;
-  const outputQty    = parseFloat(document.getElementById('yl-output-qty').value);
-  const outputUnit   = document.getElementById('yl-output-unit').value;
-  const note         = document.getElementById('yl-note').value.trim();
-
-  if (!ingredientId)           { toast('Select an ingredient.', 'error'); return; }
-  if (!inputQty || inputQty <= 0)  { toast('Input weight must be > 0.', 'error'); return; }
-  if (!outputQty || outputQty <= 0){ toast('Output weight must be > 0.', 'error'); return; }
-
-  const inputG  = toGrams(inputQty, inputUnit);
-  const outputG = toGrams(outputQty, outputUnit);
-  if (outputG > inputG + 0.001) { toast('Output cannot be heavier than input.', 'error'); return; }
-
-  const ing     = ingredients.find(i => i.id === ingredientId);
-  const yPct    = (outputG / inputG * 100).toFixed(1);
-  const payload = { id: uid(), date: todayStr(), ingredientId, ingredientName: ing?.name || '', inputQty, inputUnit, outputQty, outputUnit, note };
-
-  const btn = document.getElementById('yl-submit-btn');
-  btn.disabled = true;
-  btn.textContent = 'Submitting…';
-
-  try {
-    await fbPost('/rcc/pendingYieldLogs', payload);
-    allYieldLogs = null;
-    resetYieldForm();
-    toast(`${ing?.name || 'Item'} yield ${yPct}% logged.`);
-    loadYieldHistory();
-  } catch(e) {
-    toast('Submit failed: ' + e.message, 'error');
-    btn.disabled = false;
-  }
-  btn.textContent = 'Submit';
-}
-
-async function loadYieldHistory() {
-  if (allYieldLogs === null) {
-    try {
-      const d = await fbGet('/rcc/pendingYieldLogs');
-      allYieldLogs = d ? Object.values(d) : [];
-    } catch(e) { allYieldLogs = []; }
-  }
-
-  const today = todayStr();
-  const todayLogs = allYieldLogs
-    .filter(l => l.date === today)
-    .sort((a, b) => (b.id||'').localeCompare(a.id||''));
-
-  document.getElementById('yl-count').textContent = todayLogs.length ? `${todayLogs.length} logged today` : '';
-  document.getElementById('yield-history').innerHTML = !todayLogs.length
-    ? '<div class="empty">No yield logs yet today.<br>Fill in the form above to log your first prep.</div>'
-    : todayLogs.map(l => {
-        const inputG  = toGrams(l.inputQty, l.inputUnit);
-        const outputG = toGrams(l.outputQty, l.outputUnit);
-        const yPct    = inputG > 0 ? (outputG / inputG * 100) : 0;
-        const col     = yPct >= 80 ? 'var(--accent2)' : yPct >= 60 ? 'var(--warn)' : 'var(--danger)';
-        return `
-          <div class="yield-card">
-            <div class="yc-head">
-              <span class="yc-name">${l.ingredientName || l.ingredientId}</span>
-              <span class="yc-pct" style="color:${col}">${yPct.toFixed(1)}%</span>
-            </div>
-            <div class="yc-detail">
-              ${l.inputQty} ${l.inputUnit} in &rarr; ${l.outputQty} ${l.outputUnit} out
-              ${l.note ? `&nbsp;·&nbsp; ${l.note}` : ''}
-            </div>
           </div>`;
       }).join('') + '<div style="height:20px"></div>';
 }
