@@ -47,6 +47,7 @@
     .btn-ghost   { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
     .btn-sm      { padding: 7px 13px; font-size: .82rem; }
     .btn-warn    { background: var(--warn); color: #111; }
+    .btn-danger  { background: var(--danger); color: #fff; }
     .btn:active  { opacity: .8; }
     .btn:disabled { opacity: .4; pointer-events: none; }
 
@@ -471,7 +472,9 @@ function getTaskYieldToday(taskId) {
   const entries = (allYieldLogs || []).filter(l => l.taskId === taskId && l.date === todayStr());
   if (!entries.length) return null;
   // Return latest entry (id is timestamp-based, lexicographic sort is chronological)
-  return entries.sort((a, b) => (b.id||'').localeCompare(a.id||''))[0];
+  const latest = entries.sort((a, b) => (b.id||'').localeCompare(a.id||''))[0];
+  // If latest entry is a clear marker, treat as no yield
+  return latest.cleared ? null : latest;
 }
 
 function renderPrep() {
@@ -603,6 +606,7 @@ function renderPrep() {
             </div>
             <div class="yp-actions">
               <button class="btn btn-ghost btn-sm" onclick="toggleEditPanel('${t.id}')">Cancel</button>
+              <button class="btn btn-danger btn-sm" onclick="clearYield('${t.id}')">Clear yield</button>
               <button class="btn btn-warn" style="padding:11px 22px;font-size:1rem;color:#111" onclick="updateYield('${t.id}')">Update Yield</button>
             </div>
           </div>`;
@@ -715,12 +719,31 @@ async function saveAndDone(taskId) {
 
   try {
     await fbPost('/rcc/pendingYieldLogs', payload);
-    allYieldLogs = null;
-    await loadAllYieldLogs();
+    // Optimistically add to local cache (don't re-fetch — Firebase propagation lag
+    // would cause the new entry to be missing and the badge/edit panel to not appear)
+    allYieldLogs = allYieldLogs || [];
+    allYieldLogs.push(payload);
     await markDone(taskId);
     toast(`${taskName}: ${yPct}% yield saved.`);
   } catch(e) {
     toast('Submit failed: ' + e.message, 'error');
+  }
+}
+
+// Clear a wrongly-logged yield (posts a cleared marker — latest entry wins)
+async function clearYield(taskId) {
+  if (!confirm('Clear this yield entry? The task stays done but the yield data will be removed.')) return;
+  const task = prepTasks.find(t => t.id === taskId);
+  const payload = { id: uid(), date: todayStr(), taskId, cleared: true };
+  try {
+    await fbPost('/rcc/pendingYieldLogs', payload);
+    allYieldLogs = allYieldLogs || [];
+    allYieldLogs.push(payload);
+    expandedEditPanels.delete(taskId);
+    renderPrep();
+    toast(`Yield cleared for "${task?.name || taskId}". Task stays done.`);
+  } catch(e) {
+    toast('Clear failed: ' + e.message, 'error');
   }
 }
 
@@ -796,8 +819,8 @@ async function updateYield(taskId) {
 
   try {
     await fbPost('/rcc/pendingYieldLogs', payload);
-    allYieldLogs = null;
-    await loadAllYieldLogs();
+    allYieldLogs = allYieldLogs || [];
+    allYieldLogs.push(payload);
     expandedEditPanels.delete(taskId);
     renderPrep();
     toast(`${taskName}: yield corrected to ${yPct}%.`);
