@@ -464,7 +464,7 @@ async function loadAllYieldLogs() {
   if (allYieldLogs !== null) return;
   try {
     const d = await fbGet('/rcc/pendingYieldLogs');
-    allYieldLogs = d ? Object.values(d) : [];
+    allYieldLogs = d ? Object.values(d).filter(Boolean) : [];
   } catch(e) { allYieldLogs = []; }
 }
 
@@ -514,7 +514,8 @@ function renderPrep() {
 
         // Right badge
         let badge = '';
-        if (isDone && yieldLog) {
+        if (yieldLog && (!isToday || isDone)) {
+          // Show yield badge: for past dates always show if yield exists; for today only if task is done
           const iG  = toGrams(yieldLog.inputQty, yieldLog.inputUnit);
           const oG  = toGrams(yieldLog.outputQty, yieldLog.outputUnit);
           const yp  = iG > 0 ? (oG / iG * 100) : 0;
