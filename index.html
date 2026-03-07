@@ -468,8 +468,8 @@ async function loadAllYieldLogs() {
   } catch(e) { allYieldLogs = []; }
 }
 
-function getTaskYieldToday(taskId) {
-  const entries = (allYieldLogs || []).filter(l => l.taskId === taskId && l.date === todayStr());
+function getTaskYieldForDate(taskId, date) {
+  const entries = (allYieldLogs || []).filter(l => l.taskId === taskId && l.date === date);
   if (!entries.length) return null;
   // Return latest entry (id is timestamp-based, lexicographic sort is chronological)
   const latest = entries.sort((a, b) => (b.id||'').localeCompare(a.id||''))[0];
@@ -510,18 +510,20 @@ function renderPrep() {
         const isDone       = !!c.done;
         const isOpen       = expandedPanels.has(t.id)     && isToday && !isDone;
         const isEditOpen   = expandedEditPanels.has(t.id) && isToday &&  isDone;
-        const yieldLog     = isToday ? getTaskYieldToday(t.id) : null;
+        const yieldLog     = getTaskYieldForDate(t.id, prepDate);
 
         // Right badge
         let badge = '';
-        if (isDone && yieldLog && isToday) {
+        if (isDone && yieldLog) {
           const iG  = toGrams(yieldLog.inputQty, yieldLog.inputUnit);
           const oG  = toGrams(yieldLog.outputQty, yieldLog.outputUnit);
           const yp  = iG > 0 ? (oG / iG * 100) : 0;
           const col = yp >= 80 ? 'var(--accent2)' : yp >= 60 ? 'var(--warn)' : 'var(--danger)';
-          badge = `<span id="yb-${t.id}" style="font-size:.8rem;font-weight:700;color:${col}">${yp.toFixed(1)}% ${isEditOpen ? '▲' : '✏'}</span>`;
-        } else if (isDone && !yieldLog) {
-          badge = isDone ? '' : '';  // no yield badge
+          if (isToday) {
+            badge = `<span id="yb-${t.id}" style="font-size:.8rem;font-weight:700;color:${col}">${yp.toFixed(1)}% ${isEditOpen ? '▲' : '✏'}</span>`;
+          } else {
+            badge = `<span style="font-size:.8rem;font-weight:700;color:${col}">${yp.toFixed(1)}%</span>`;
+          }
         } else if (!isDone && isToday) {
           badge = `<span id="yb-${t.id}" style="font-size:.72rem;color:var(--muted)">${isOpen ? '▲' : '▼ yield'}</span>`;
         }
